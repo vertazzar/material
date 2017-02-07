@@ -355,7 +355,7 @@ function MdToastProvider($$interimElementProvider) {
     return $mdToast;
 
   /* @ngInject */
-  function toastDefaultOptions($animate, $mdToast, $mdUtil, $mdMedia) {
+  function toastDefaultOptions($animate, $mdToast, $mdUtil, $mdMedia, $q) {
     var SWIPE_EVENTS = '$md.swipeleft $md.swiperight $md.swipeup $md.swipedown';
     return {
       onShow: onShow,
@@ -453,13 +453,21 @@ function MdToastProvider($$interimElementProvider) {
       if (options.parent) options.parent.addClass('md-toast-animating');
       if (options.openClass) options.parent.removeClass(options.openClass);
 
-      return ((options.$destroy == true) ? element.remove() : $animate.leave(element))
-        .then(function () {
-          if (options.parent) options.parent.removeClass('md-toast-animating');
-          if ($mdUtil.hasComputedStyle(options.parent, 'position', 'static')) {
-            options.parent.css('position', '');
-          }
-        });
+      var success = function () {
+        if (options.parent) options.parent.removeClass('md-toast-animating');
+        if ($mdUtil.hasComputedStyle(options.parent, 'position', 'static')) {
+          options.parent.css('position', '');
+        }
+      };
+      var promise;
+      if (options.$destroy) {
+        element.remove();
+        success();
+        promise = $q.when();
+      } else {
+        promise = $animate.leave(element).then(success);
+      }
+      return promise;
     }
 
     function toastOpenClass(position) {
