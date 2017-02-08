@@ -11,7 +11,7 @@ angular.module('material.core')
     .directive('mdNoBar', attrNoDirective)
     .directive('mdNoStretch', attrNoDirective);
 
-var DURATION = 300;
+var DURATION = 200;
 
 /**
  * @ngdoc directive
