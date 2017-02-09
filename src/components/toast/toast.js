@@ -21,7 +21,7 @@ function MdToastDirective($mdToast) {
       // When navigation force destroys an interimElement, then
       // listen and $destroy() that interim instance...
       scope.$on('$destroy', function() {
-        $mdToast.destroy();
+        scope.close();
       });
     }
   };
