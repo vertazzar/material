@@ -251,7 +251,7 @@
      }
 
      /* @ngInject */
-     function InterimElementFactory($document, backButtonQueue, $q, $$q, $rootScope, $timeout, $rootElement, $animate,
+     function InterimElementFactory($document, $q, $$q, $rootScope, $timeout, $rootElement, $animate,
          $mdUtil, $mdCompiler, $mdTheming, $injector) {
          return function createInterimElementService() {
              var SHOW_CANCELLED = false;
@@ -536,9 +536,17 @@
 
                                  showAction.then(function() {
                                      if (options.escapeToClose !== false) {
-                                         options.backButtonDeregister = backButtonQueue.add(function() {
-                                             transitionOutAndRemove('back', false, options);
-                                         });
+                                         var backButtonQueue;
+                                         try {
+                                             backButtonQueue = $injector.get('backButtonQueue');
+                                         } catch (e) {
+
+                                         }
+                                         if (backButtonQueue) {
+                                             options.backButtonDeregister = backButtonQueue.add(function() {
+                                                 transitionOutAndRemove('back', false, options);
+                                             });
+                                         }
                                      }
                                  });
 
@@ -742,7 +750,12 @@
                      // Trigger onComplete callback when the `show()` finishes
                      var notifyComplete = options.onComplete || angular.noop;
 
-                     notifyShowing(options.scope, element, options, controller);
+                     // Necessary for consistency between Angular 1.5 and 1.6.
+                      try {
+                          notifyShowing(options.scope, element, options, controller);
+                      } catch (e) {
+                          return $q.reject(e);
+                      }
 
                      return $q(function(resolve, reject) {
                          try {
