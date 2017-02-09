@@ -363,6 +363,7 @@ function MdToastProvider($$interimElementProvider) {
       toastClass: '',
       position: 'bottom left',
       themable: true,
+      isolateScope: true,
       hideDelay: 3000,
       autoWrap: true,
       transformTemplate: function(template, options) {
