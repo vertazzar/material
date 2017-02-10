@@ -84,7 +84,9 @@ function getDirective(name) {
   function DirectiveFactory($parse) {
       return { restrict: 'A', link: postLink };
       function postLink(scope, element, attr) {
-        element.css('touch-action', 'none');
+        if (!element.is('md-sidenav')) {
+          element.css('touch-action', 'none');
+        }
 
         var fn = $parse(attr[directiveName]);
         element.on(eventName, function(ev) {
