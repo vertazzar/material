@@ -1216,6 +1216,12 @@ function MdDialogProvider($$interimElementProvider) {
                 .translate3d(dialogEl, from, to,translateOptions);
             }
 
+            if (options.defaultAnimation !== true) {
+              return animateReversal({
+                opacity: 0
+              });
+            }
+
             return animateReversal(
               to = animator.toTransformCss(
                 // in case the origin element has moved or is hidden,
