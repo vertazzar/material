@@ -391,7 +391,9 @@ function MdAutocompleteCtrl ($scope, $element, $mdUtil, $mdConstant, $mdTheming,
 
     if (selectedItem) {
       getDisplayValue(selectedItem).then(function (val) {
-        $scope.searchText = val;
+        if (!ctrl.scope.dontAutoPopulateSearchText) {
+          $scope.searchText = val;
+        }
         handleSelectedItemChange(selectedItem, previousSelectedItem);
       });
     } else if (previousSelectedItem && $scope.searchText) {

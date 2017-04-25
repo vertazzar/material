@@ -237,6 +237,7 @@ function MdAutocomplete ($$mdSvgRegistry) {
       itemsExpr:        '@mdItems',
       itemText:         '&mdItemText',
       placeholder:      '@placeholder',
+      dontAutoPopulateSearchText:      '@mdDontAutoPopulateSearchText',
       noCache:          '=?mdNoCache',
       requireMatch:     '=?mdRequireMatch',
       selectOnMatch:    '=?mdSelectOnMatch',
