@@ -75,25 +75,25 @@ angular.module('material.components.swipe', ['material.core'])
     .directive('mdSwipeDown', getDirective('SwipeDown'));
 
 function getDirective(name) {
-  var directiveName = 'md' + name;
-  var eventName = '$md.' + name.toLowerCase();
+    var directiveName = 'md' + name;
+    var eventName = '$md.' + name.toLowerCase();
 
-  return DirectiveFactory;
+    return DirectiveFactory;
 
-  /* @ngInject */
-  function DirectiveFactory($parse) {
-      return { restrict: 'A', link: postLink };
-      function postLink(scope, element, attr) {
-        if (!element.is('md-sidenav')) {
-          element.css('touch-action', 'none');
+    /* @ngInject */
+    function DirectiveFactory($parse) {
+        return { restrict: 'A', link: postLink };
+
+        function postLink(scope, element, attr) {
+            if (!element.is('md-sidenav')) {
+                element.css('touch-action', 'none');
+            }
+
+            var fn = $parse(attr[directiveName]);
+            element.on(eventName, function(ev) {
+                scope.$applyAsync(function() { fn(scope, { $event: ev }); });
+            });
         }
-
-        var fn = $parse(attr[directiveName]);
-        element.on(eventName, function(ev) {
-          scope.$applyAsync(function() { fn(scope, { $event: ev }); });
-        });
-      }
     }
+
 }
-
-
