@@ -50,7 +50,7 @@ function MdTooltipDirective($timeout, $window, $$rAF, $document, $interpolate,
 
   var ENTER_EVENTS = 'focus touchstart mouseenter';
   var LEAVE_EVENTS = 'blur touchcancel mouseleave';
-  var TOOLTIP_DEFAULT_Z_INDEX = 100;
+  var TOOLTIP_DEFAULT_Z_INDEX = 99999;
   var TOOLTIP_DEFAULT_SHOW_DELAY = 0;
   var TOOLTIP_DEFAULT_DIRECTION = 'bottom';
   var TOOLTIP_DIRECTIONS = {
