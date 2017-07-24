@@ -280,6 +280,7 @@ function SidenavDirective($mdMedia, $mdUtil, $mdConstant, $mdTheming, $mdInterac
       });
     };
 
+
     if (attr.mdDisableScrollTarget) {
       disableScrollTarget = $document[0].querySelector(attr.mdDisableScrollTarget);
 
@@ -298,6 +299,7 @@ function SidenavDirective($mdMedia, $mdUtil, $mdConstant, $mdTheming, $mdInterac
     // Only create the backdrop if the backdrop isn't disabled.
     if (!attr.hasOwnProperty('mdDisableBackdrop')) {
       backdrop = $mdUtil.createBackdrop(scope, "md-sidenav-backdrop md-opaque ng-enter");
+      scope.backdrop = backdrop;
     }
 
     element.addClass('_md');     // private md component indicator for styling
@@ -525,6 +527,9 @@ function SidenavController($scope, $attrs, $mdComponentRegistry, $q, $interpolat
   self.close  = function() { return self.$toggleOpen( false ); };
   self.toggle = function() { return self.$toggleOpen( !$scope.isOpen );  };
   self.$toggleOpen = function(value) { return $q.when($scope.isOpen = value); };
+  self.getBackdrop = function () {
+    return $scope.backdrop;
+  };
 
   // Evaluate the component id.
   var rawId = $attrs.mdComponentId;
