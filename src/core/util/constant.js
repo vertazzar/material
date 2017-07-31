@@ -130,6 +130,7 @@ function MdConstantFactory() {
       'gt-md'     : '(min-width: 1280px)'                        ,
       'lg'        : '(min-width: 1280px) and (max-width: 1919px)',
       'gt-lg'     : '(min-width: 1920px)'                        ,
+      'gt-lgish'     : '(min-width: 1900px)'                     ,
       'xl'        : '(min-width: 1920px)'                        ,
       'landscape' : '(orientation: landscape)'                   ,
       'portrait'  : '(orientation: portrait)'                    ,

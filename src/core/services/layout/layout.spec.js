@@ -43,7 +43,7 @@ describe("Layout API ", function() {
   });
 
   describe('layout directives', function() {
-    var suffixes = ['xs', 'gt-xs', 'sm', 'gt-sm', 'md', 'gt-md', 'lg', 'gt-lg', 'xl', 'print'],
+    var suffixes = ['xs', 'gt-xs', 'sm', 'gt-sm', 'md', 'gt-md', 'lg', 'gt-lg', 'gt-lgish', 'xl', 'print'],
       $mdUtil, $compile, pageScope;
 
     beforeEach(inject(function(_$compile_, _$rootScope_, _$mdUtil_) {

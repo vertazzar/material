@@ -21,6 +21,7 @@ $layout-breakpoint-xs:     600px !default;
 $layout-breakpoint-sm:     960px !default;
 $layout-breakpoint-md:     1280px !default;
 $layout-breakpoint-lg:     1920px !default;
+$layout-breakpoint-lgish:     1900px !default;
 
 @-moz-document url-prefix() {
   [layout-fill] {
@@ -502,6 +503,22 @@ $layout-breakpoint-lg:     1920px !default;
     }
   }
   [hide-xl]:not([show-xl]):not([show-gt-lg]):not([show]) {
+    display: none;
+  }
+}
+
+@media (min-width: $layout-breakpoint-lgish) {
+  // BIGGER THAN LARGE SCREEN
+  @include layouts_for_breakpoint(gt-lgish);
+  @include layouts_for_breakpoint(xl);
+
+  // BIGGER THAN LARGE SCREEN
+  [hide], [hide-gt-xs], [hide-gt-sm], [hide-gt-md], [hide-gt-lgish] {
+    &:not([show-gt-xs]):not([show-gt-sm]):not([show-gt-md]):not([show-gt-lgish]):not([show-xl]):not([show]) {
+      display: none;
+    }
+  }
+  [hide-xl]:not([show-xl]):not([show-gt-lgish]):not([show]) {
     display: none;
   }
 }
