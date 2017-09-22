@@ -82,7 +82,7 @@ function getDirective(name) {
 
     /* @ngInject */
     function DirectiveFactory($parse) {
-        return { restrict: 'A', link: postLink };
+        return {restrict: 'A', link: postLink};
 
         function postLink(scope, element, attr) {
             if (!element.is('md-sidenav')) {
@@ -90,8 +90,10 @@ function getDirective(name) {
             }
 
             var fn = $parse(attr[directiveName]);
-            element.on(eventName, function(ev) {
-                scope.$applyAsync(function() { fn(scope, { $event: ev }); });
+            element.on(eventName, function (ev) {
+                scope.$applyAsync(function () {
+                    fn(scope, {$event: ev});
+                });
             });
         }
     }
