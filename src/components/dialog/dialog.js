@@ -798,7 +798,9 @@ function MdDialogProvider($$interimElementProvider) {
      * Remove function for all dialogs
      */
     function onRemove(scope, element, options) {
-      options.deactivateListeners();
+      if (options.deactivateListeners) {
+          options.deactivateListeners();
+      }
       options.unlockScreenReader();
       options.hideBackdrop(options.$destroy);
 
