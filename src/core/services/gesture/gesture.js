@@ -84,12 +84,29 @@ function MdGesture($$MdGestureHandler, $$rAF, $timeout) {
   var touchActionProperty = getTouchAction();
   var hasJQuery =  (typeof window.jQuery !== 'undefined') && (angular.element === window.jQuery);
 
-  var self = {
-    handler: addHandler,
-    register: register,
-    // On mobile w/out jQuery, we normally intercept clicks. Should we skip that?
-    isHijackingClicks: (isIos || isAndroid) && !hasJQuery && !forceSkipClickHijack
-  };
+  if (window.Hammer) {
+      var self = {
+          handler: function () {
+            console.log("called MdGesture.handler", arguments);
+          },
+          register: function () {
+              console.log("called MdGesture.register", arguments);
+          },
+          // On mobile w/out jQuery, we normally intercept clicks. Should we skip that?
+          isHijackingClicks: (isIos || isAndroid) && !hasJQuery && !forceSkipClickHijack
+      };
+  } else {
+      var self = {
+          handler: addHandler,
+          register: register,
+          // On mobile w/out jQuery, we normally intercept clicks. Should we skip that?
+          isHijackingClicks: (isIos || isAndroid) && !hasJQuery && !forceSkipClickHijack
+      };
+  }
+
+  if (window.Hammer) {
+    return;
+  }
 
   if (self.isHijackingClicks) {
     self.handler('click', {
@@ -510,6 +527,10 @@ function MdGestureHandler() {
  * @ngInject
  */
 function attachToDocument( $mdGesture, $$MdGestureHandler ) {
+
+  if (window.Hammer) {
+    return;
+  }
 
   // Polyfill document.contains for IE11.
   // TODO: move to util
