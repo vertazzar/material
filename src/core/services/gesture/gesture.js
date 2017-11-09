@@ -105,7 +105,7 @@ function MdGesture($$MdGestureHandler, $$rAF, $timeout) {
   }
 
   if (window.Hammer) {
-    return;
+    return self;
   }
 
   if (self.isHijackingClicks) {
