@@ -87,10 +87,10 @@ function MdGesture($$MdGestureHandler, $$rAF, $timeout) {
   if (window.Hammer) {
       var self = {
           handler: function () {
-            console.log("called MdGesture.handler", arguments);
+            return function () {};
           },
           register: function () {
-              console.log("called MdGesture.register", arguments);
+            return function () {};
           },
           // On mobile w/out jQuery, we normally intercept clicks. Should we skip that?
           isHijackingClicks: (isIos || isAndroid) && !hasJQuery && !forceSkipClickHijack

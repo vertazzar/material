@@ -235,12 +235,52 @@ function SliderDirective($$rAF, $window, $mdAria, $mdUtil, $mdConstant, $mdThemi
       .on('keydown', keydownListener)
       .on('mousedown', mouseDownListener)
       .on('focus', focusListener)
-      .on('blur', blurListener)
-      .on('$md.pressdown', onPressDown)
-      .on('$md.pressup', onPressUp)
-      .on('$md.dragstart', onDragStart)
-      .on('$md.drag', onDrag)
-      .on('$md.dragend', onDragEnd);
+      .on('blur', blurListener);
+
+      var hammertime = null;
+
+    if (window.Hammer) {
+        hammertime = new Hammer(wrapper[0]);
+        hammertime.on('touch', function () {
+          onPressDown();
+        });
+        hammertime.on('release', function () {
+          onPressUp();
+        });
+        // drag, dragstart, dragend
+        hammertime.on('dragstart', function (ev) {
+          ev.pointer = {
+              x: ev.deltaX,
+              y: ev.deltaY
+          };
+          onDragStart(ev);
+        });
+        hammertime.on('drag', function (ev) {
+          ev.pointer = {
+            x: ev.deltaX,
+            y: ev.deltaY
+          };
+          onDrag(ev);
+        });
+        hammertime.on('dragend', function (ev) {
+          ev.pointer = {
+              x: ev.deltaX,
+              y: ev.deltaY
+          };
+          onDragEnd(ev);
+        });
+
+        scope.$on('$destroy', function () {
+            hammertime.destroy();
+        });
+    } else {
+        wrapper
+            .on('$md.pressdown', onPressDown)
+            .on('$md.pressup', onPressUp)
+            .on('$md.dragstart', onDragStart)
+            .on('$md.drag', onDrag)
+            .on('$md.dragend', onDragEnd);
+    }
 
     // On resize, recalculate the slider's dimensions and re-render
     function updateAll() {
