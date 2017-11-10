@@ -249,24 +249,15 @@ function SliderDirective($$rAF, $window, $mdAria, $mdUtil, $mdConstant, $mdThemi
         });
         // drag, dragstart, dragend
         hammertime.on('panstart', function (ev) {
-          ev.pointer = {
-              x: ev.deltaX,
-              y: ev.deltaY
-          };
+          ev.pointer = ev.center;
           onDragStart(ev);
         });
         hammertime.on('pan', function (ev) {
-          ev.pointer = {
-            x: ev.deltaX,
-            y: ev.deltaY
-          };
+          ev.pointer = ev.center;
           onDrag(ev);
         });
         hammertime.on('panend', function (ev) {
-          ev.pointer = {
-              x: ev.deltaX,
-              y: ev.deltaY
-          };
+          ev.pointer = ev.center;
           onDragEnd(ev);
         });
 
@@ -414,7 +405,9 @@ function SliderDirective($$rAF, $window, $mdAria, $mdUtil, $mdConstant, $mdThemi
           changeAmount *= 4;
         }
         ev.preventDefault();
-        ev.stopPropagation();
+        if (ev.stopPropagation) {
+            ev.stopPropagation();
+        }
         scope.$evalAsync(function() {
           setModelValue(ngModelCtrl.$viewValue + changeAmount);
         });
@@ -547,19 +540,25 @@ function SliderDirective($$rAF, $window, $mdAria, $mdUtil, $mdConstant, $mdThemi
       if (isDisabled()) return;
       isDragging = true;
 
-      ev.stopPropagation();
+      if (ev.stopPropagation) {
+          ev.stopPropagation();
+      }
 
       element.addClass('md-dragging');
       setSliderFromEvent(ev);
     }
     function onDrag(ev) {
       if (!isDragging) return;
-      ev.stopPropagation();
+      if (ev.stopPropagation) {
+          ev.stopPropagation();
+      }
       setSliderFromEvent(ev);
     }
     function onDragEnd(ev) {
       if (!isDragging) return;
-      ev.stopPropagation();
+      if (ev.stopPropagation) {
+          ev.stopPropagation();
+      }
       isDragging = false;
     }
 
