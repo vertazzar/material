@@ -241,24 +241,30 @@ function SliderDirective($$rAF, $window, $mdAria, $mdUtil, $mdConstant, $mdThemi
 
     if (window.Hammer) {
         hammertime = new Hammer(wrapper[0]);
-        hammertime.on('touch', function () {
-          onPressDown();
+        hammertime.on('tap', function (ev) {
+            ev.pointer = ev.center;
+            onPressDown(ev);
         });
-        hammertime.on('release', function () {
-          onPressUp();
+        hammertime.on('pressup', function (ev) {
+            ev.pointer = ev.center;
+            onPressUp(ev);
         });
         // drag, dragstart, dragend
         hammertime.on('panstart', function (ev) {
-          ev.pointer = ev.center;
-          onDragStart(ev);
+            ev.pointer = ev.center;
+            onDragStart(ev);
         });
-        hammertime.on('pan', function (ev) {
-          ev.pointer = ev.center;
-          onDrag(ev);
+        hammertime.on('panleft', function (ev) {
+            ev.pointer = ev.center;
+            onDrag(ev);
+        });
+        hammertime.on('panright', function (ev) {
+            ev.pointer = ev.center;
+            onDrag(ev);
         });
         hammertime.on('panend', function (ev) {
-          ev.pointer = ev.center;
-          onDragEnd(ev);
+            ev.pointer = ev.center;
+            onDragEnd(ev);
         });
 
         scope.$on('$destroy', function () {
