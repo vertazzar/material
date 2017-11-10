@@ -248,21 +248,21 @@ function SliderDirective($$rAF, $window, $mdAria, $mdUtil, $mdConstant, $mdThemi
           onPressUp();
         });
         // drag, dragstart, dragend
-        hammertime.on('dragstart', function (ev) {
+        hammertime.on('panstart', function (ev) {
           ev.pointer = {
               x: ev.deltaX,
               y: ev.deltaY
           };
           onDragStart(ev);
         });
-        hammertime.on('drag', function (ev) {
+        hammertime.on('pan', function (ev) {
           ev.pointer = {
             x: ev.deltaX,
             y: ev.deltaY
           };
           onDrag(ev);
         });
-        hammertime.on('dragend', function (ev) {
+        hammertime.on('panend', function (ev) {
           ev.pointer = {
               x: ev.deltaX,
               y: ev.deltaY
