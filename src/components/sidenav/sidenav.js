@@ -366,8 +366,9 @@ function SidenavDirective($mdMedia, $mdUtil, $mdConstant, $mdTheming, $mdInterac
       return promise = $q.all([
         isOpen && backdrop ? $animate.enter(backdrop, parent) : backdrop ?
                              $animate.leave(backdrop) : $q.when(true),
-        $animate[isOpen ? 'removeClass' : 'addClass'](element, 'md-closed')
+        scope.softOpen ? $q.when(true) : $animate[isOpen ? 'removeClass' : 'addClass'](element, 'md-closed')
       ]).then(function() {
+          delete scope.softOpen;
         // Perform focus when animations are ALL done...
         if (scope.isOpen) {
           $$rAF(function() {
@@ -446,7 +447,7 @@ function SidenavDirective($mdMedia, $mdUtil, $mdConstant, $mdTheming, $mdInterac
      * @param isOpen
      * @returns {*}
      */
-    function toggleOpen( isOpen ) {
+    function toggleOpen( isOpen, soft) {
       if (scope.isOpen == isOpen ) {
 
         return $q.when(true);
@@ -457,6 +458,7 @@ function SidenavDirective($mdMedia, $mdUtil, $mdConstant, $mdTheming, $mdInterac
         return $q(function(resolve){
           // Toggle value to force an async `updateIsOpen()` to run
           scope.isOpen = isOpen;
+          scope.softOpen = soft;
 
           $mdUtil.nextTick(function() {
             // When the current `updateIsOpen()` animation finishes
@@ -524,7 +526,9 @@ function SidenavController($scope, $attrs, $mdComponentRegistry, $q, $interpolat
 
   // Async actions
   self.open   = function() { return self.$toggleOpen( true );  };
+  self.openSoft   = function() { return self.$toggleOpen( true, true);  };
   self.close  = function() { return self.$toggleOpen( false ); };
+  self.closeSoft  = function() { return self.$toggleOpen( false, true); };
   self.toggle = function() { return self.$toggleOpen( !$scope.isOpen );  };
   self.$toggleOpen = function(value) { return $q.when($scope.isOpen = value); };
   self.getBackdrop = function () {
