@@ -48,8 +48,8 @@ angular
 function MdTooltipDirective($timeout, $window, $$rAF, $document, $interpolate,
     $mdUtil, $mdPanel, $$mdTooltipRegistry) {
 
-  var ENTER_EVENTS = 'focus touchstart mouseenter';
-  var LEAVE_EVENTS = 'blur touchcancel mouseleave';
+  var ENTER_EVENTS = 'focus mouseenter';
+  var LEAVE_EVENTS = 'blur mouseleave';
   var TOOLTIP_DEFAULT_Z_INDEX = 99999;
   var TOOLTIP_DEFAULT_SHOW_DELAY = 0;
   var TOOLTIP_DEFAULT_DIRECTION = 'bottom';
@@ -79,7 +79,7 @@ function MdTooltipDirective($timeout, $window, $$rAF, $document, $interpolate,
     var parent = $mdUtil.getParentWithPointerEvents(element);
     var debouncedOnResize = $$rAF.throttle(updatePosition);
     var mouseActive = false;
-    var origin, position, panelPosition, panelRef, autohide, showTimeout,
+    var origin, position, hammertime, panelPosition, panelRef, autohide, showTimeout,
         elementFocusedOnWindowBlur = null;
 
     // Set defaults
@@ -185,6 +185,12 @@ function MdTooltipDirective($timeout, $window, $$rAF, $document, $interpolate,
       parent.on('mousedown', mousedownEventHandler);
       parent.on(ENTER_EVENTS, enterEventHandler);
 
+      if (window.Hammer) {
+          hammertime = new window.Hammer(parent[0]);
+          hammertime.on('press', enterEventHandler);
+          hammertime.on('pressup', leaveEventHandler);
+      }
+
       function isDisabledMutation(mutations) {
         mutations.some(function(mutation) {
           return mutation.attributeName === 'disabled' && parent[0].disabled;
@@ -250,6 +256,11 @@ function MdTooltipDirective($timeout, $window, $$rAF, $document, $interpolate,
       }
 
       function onDestroy() {
+
+        if (hammertime) {
+            hammertime.destroy();
+        }
+
         $$mdTooltipRegistry.deregister('scroll', windowScrollEventHandler, true);
         $$mdTooltipRegistry.deregister('blur', windowBlurEventHandler);
         $$mdTooltipRegistry.deregister('resize', debouncedOnResize);
