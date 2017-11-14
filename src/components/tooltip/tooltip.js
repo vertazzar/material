@@ -182,13 +182,15 @@ function MdTooltipDirective($timeout, $window, $$rAF, $document, $interpolate,
 
       // To avoid 'synthetic clicks', we listen to mousedown instead of
       // 'click'.
-      parent.on('mousedown', mousedownEventHandler);
-      parent.on(ENTER_EVENTS, enterEventHandler);
 
-      if (window.Hammer) {
+
+      if (window.Hammer && window.Modernizr && window.Modernizr.touchevents) {
           hammertime = new window.Hammer(parent[0]);
           hammertime.on('press', enterEventHandler);
           hammertime.on('pressup', leaveEventHandler);
+      } else {
+          parent.on('mousedown', mousedownEventHandler);
+          parent.on(ENTER_EVENTS, enterEventHandler);
       }
 
       function isDisabledMutation(mutations) {
