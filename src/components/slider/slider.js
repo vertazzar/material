@@ -270,6 +270,10 @@ function SliderDirective($$rAF, $window, $mdAria, $mdUtil, $mdConstant, $mdThemi
         scope.$on('$destroy', function () {
             hammertime.destroy();
         });
+
+        wrapper.on('click', function () {
+            refreshSliderDimensions();
+        });
     } else {
         wrapper
             .on('$md.pressdown', onPressDown)
