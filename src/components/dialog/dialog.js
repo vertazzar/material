@@ -472,6 +472,7 @@ function MdDialogDirective($$rAF, $mdTheming, $mdDialog) {
  * - $mdDialogPreset#htmlContent(string) - Sets the prompt message as HTML. Requires ngSanitize
  *     module to be loaded. HTML is not run through Angular's compiler.
  * - $mdDialogPreset#placeholder(string) - Sets the placeholder text for the input.
+ * - $mdDialogPreset#required(boolean) - Sets the input required value.
  * - $mdDialogPreset#initialValue(string) - Sets the initial value for the prompt input.
  * - $mdDialogPreset#ok(string) - Sets the prompt "Okay" button text.
  * - $mdDialogPreset#cancel(string) - Sets the prompt "Cancel" button text.
@@ -658,7 +659,9 @@ function MdDialogProvider($$interimElementProvider) {
         $mdDialog.cancel();
       };
       this.keypress = function($event) {
-        if ($event.keyCode === $mdConstant.KEY_CODE.ENTER) {
+        var invalidPrompt = isPrompt && this.required && !angular.isDefined(this.result);
+
+        if ($event.keyCode === $mdConstant.KEY_CODE.ENTER && !invalidPrompt) {
           $mdDialog.hide(this.result);
         }
       };
@@ -815,7 +818,7 @@ function MdDialogProvider($$interimElementProvider) {
 
       // For navigation $destroy events, do a quick, non-animated removal,
       // but for normal closes (from clicks, etc) animate the removal
-      return !!options.$destroy ? detachAndClean() : animateRemoval().then( detachAndClean );
+      return options.$destroy ? detachAndClean() : animateRemoval().then( detachAndClean );
 
       /**
        * For normal closes, animate the removal.
@@ -1050,7 +1053,7 @@ function MdDialogProvider($$interimElementProvider) {
        */
       options.hideBackdrop = function hideBackdrop($destroy) {
         if (options.backdrop) {
-          if ( !!$destroy ) options.backdrop.remove();
+          if ( $destroy ) options.backdrop.remove();
           else              $animate.leave(options.backdrop);
         }
 
