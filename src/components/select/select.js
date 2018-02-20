@@ -894,7 +894,9 @@ function SelectMenuDirective($parse, $mdUtil, $mdConstant, $mdTheming) {
       var prevVal = self.ngModel.$modelValue;
 
       if (usingTrackBy ? !angular.equals(prevVal, newVal) : (prevVal + '') !== newVal) {
-        self.ngModel.$setViewValue(newVal);
+        if (newVal !== undefined) {
+            self.ngModel.$setViewValue(newVal);
+        }
         self.ngModel.$render();
       }
     };
