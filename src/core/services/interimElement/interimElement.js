@@ -354,7 +354,7 @@
 
                  // Return a promise that will be resolved when the interim
                  // element is hidden or cancelled...
-
+                 interimElement.deferred.promise.$interimElement = interimElement;
                  return interimElement.deferred.promise;
              }
 
