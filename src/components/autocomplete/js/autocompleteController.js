@@ -500,7 +500,7 @@ function MdAutocompleteCtrl ($scope, $element, $mdUtil, $mdConstant, $mdTheming,
   function blur($event) {
     hasFocus = false;
 
-    if (!noBlur && (!lastFocusElement || lastFocusElement === $event.target)) {
+    if (!noBlur || (lastFocusElement && lastFocusElement !== $event.target)) {
       ctrl.hidden = shouldHide();
       evalAttr('ngBlur', { $event: $event });
     }
