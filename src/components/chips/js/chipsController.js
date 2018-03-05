@@ -586,7 +586,7 @@ MdChipsCtrl.prototype.removeChipAndFocusInput = function (index) {
     // Wait for the input to move horizontally, because the chip was removed.
     // This can lead to an incorrect dropdown position.
     this.autocompleteCtrl.hidden = true;
-    this.$mdUtil.nextTick(this.onFocus.bind(this));
+    //this.$mdUtil.nextTick(this.onFocus.bind(this));
   } else {
     this.onFocus();
   }
@@ -628,7 +628,7 @@ MdChipsCtrl.prototype.focusLastChipThenInput = function() {
   ctrl.focusChip(this.items.length - 1);
 
   ctrl.$timeout(function() {
-    ctrl.focusInput();
+    //ctrl.focusInput();
   }, ctrl.chipAppendDelay);
 };
 

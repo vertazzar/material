@@ -3,7 +3,6 @@ angular
     .controller('MdAutocompleteCtrl', MdAutocompleteCtrl);
 
 var ITEM_HEIGHT   = 48,
-    lastFocusElement,
     MAX_ITEMS     = 5,
     MENU_PADDING  = 8,
     INPUT_PADDING = 2; // Padding provided by `md-input-container`
@@ -500,10 +499,17 @@ function MdAutocompleteCtrl ($scope, $element, $mdUtil, $mdConstant, $mdTheming,
   function blur($event) {
     hasFocus = false;
 
-    if (!noBlur || (lastFocusElement && lastFocusElement !== $event.target)) {
-      ctrl.hidden = shouldHide();
-      evalAttr('ngBlur', { $event: $event });
-    }
+      setTimeout(function () {
+          if (((!document.activeElement || document.activeElement === $event.target) && noBlur)) {
+              return;
+          }
+
+          ctrl.hidden = shouldHide();
+          evalAttr('ngBlur', { $event: $event });
+          if (!$scope.$$phase && (!$scope.$root || !$scope.$root.$$phase)) {
+              $scope.$digest();
+          }
+      }, 200);
   }
 
   /**
@@ -522,7 +528,6 @@ function MdAutocompleteCtrl ($scope, $element, $mdUtil, $mdConstant, $mdTheming,
    * Handles input focus event, determines if the dropdown should show.
    */
   function focus($event) {
-    lastFocusElement = $event.target;
     hasFocus = true;
 
     if (isSearchable() && isMinLengthMet()) {
