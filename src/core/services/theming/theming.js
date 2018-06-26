@@ -658,6 +658,9 @@ function ThemingProvider($mdColorPalette, $$mdMetaProvider) {
     applyTheme.registered = registered;
     applyTheme.defaultTheme = function() { return defaultTheme; };
     applyTheme.generateTheme = function(name) { generateTheme(THEMES[name], name, themeConfig.nonce); };
+    applyTheme.overrideTheme = function (src, target) {
+        generateTheme(THEMES[src], src, themeConfig.nonce, THEMES[target]);
+    };
     applyTheme.defineTheme = function(name, options) {
       options = options || {};
 
@@ -877,8 +880,13 @@ function ThemableDirective($mdTheming) {
   return $mdTheming;
 }
 
-function parseRules(theme, colorType, rules) {
+function parseRules(theme, colorType, rules, override) {
   checkValidPalette(theme, colorType);
+  if (override) {
+    theme = override;
+    var initialOverride = override.name;
+    theme.name = 'default';
+  }
 
   rules = rules.replace(/THEME_NAME/g, theme.name);
   var themeNameRegex = new RegExp('\\.md-' + theme.name + '-theme', 'g');
@@ -933,6 +941,10 @@ function parseRules(theme, colorType, rules) {
     }
     generatedRules.push(newRule);
   });
+
+  if (override) {
+    theme.name = initialOverride;
+  }
 
   return generatedRules;
 }
@@ -1060,15 +1072,24 @@ function generateAllThemes($injector, $mdTheming) {
   }
 }
 
-function generateTheme(theme, name, nonce) {
+function generateTheme(theme, name, nonce, override) {
   var head = document.head;
-  var firstChild = head ? head.firstElementChild : null;
+  var firstChild = null;
+
+  if (override && GENERATED[name]) {
+     var initial = GENERATED[name];
+     delete GENERATED[name];
+     angular.forEach(initial, function (node) {
+         head.removeChild(node);
+     });
+  }
 
   if (!GENERATED[name]) {
+    var stylesheets = [];
     // For each theme, use the color palettes specified for
     // `primary`, `warn` and `accent` to generate CSS rules.
     THEME_COLOR_TYPES.forEach(function(colorType) {
-      var styleStrings = parseRules(theme, colorType, rulesByType[colorType]);
+      var styleStrings = parseRules(theme, colorType, rulesByType[colorType], override);
       while (styleStrings.length) {
         var styleContent = styleStrings.shift();
         if (styleContent) {
@@ -1079,11 +1100,12 @@ function generateTheme(theme, name, nonce) {
           }
           style.appendChild(document.createTextNode(styleContent));
           head.insertBefore(style, firstChild);
+          stylesheets.push(style);
         }
       }
     });
 
-    GENERATED[theme.name] = true;
+    GENERATED[theme.name] = stylesheets;
   }
 
 }
