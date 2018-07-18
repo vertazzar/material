@@ -21,9 +21,11 @@ angular
  * @param $element
  * @param $timeout
  * @param $mdUtil
+ * @param $exceptionHandler
  * @constructor
  */
-function MdChipsCtrl ($scope, $attrs, $mdConstant, $log, $element, $timeout, $mdUtil) {
+function MdChipsCtrl ($scope, $attrs, $mdConstant, $log, $element, $timeout, $mdUtil,
+                      $exceptionHandler) {
   /** @type {$timeout} **/
   this.$timeout = $timeout;
 
@@ -41,6 +43,9 @@ function MdChipsCtrl ($scope, $attrs, $mdConstant, $log, $element, $timeout, $md
 
   /** @type {$log} */
   this.$log = $log;
+
+  /** @type {$exceptionHandler} */
+  this.$exceptionHandler = $exceptionHandler;
 
   /** @type {$element} */
   this.$element = $element;
@@ -137,15 +142,15 @@ function MdChipsCtrl ($scope, $attrs, $mdConstant, $log, $element, $timeout, $md
    * Array of unique numbers which will be auto-generated any time the items change, and is used to
    * create unique IDs for the aria-owns attribute.
    *
-   * @type {Array}
+   * @type {Array<number>}
    */
   this.contentIds = [];
 
   /**
-   * The index of the chip that should have it's tabindex property set to 0 so it is selectable
+   * The index of the chip that should have it's `tabindex` property set to `0` so it is selectable
    * via the keyboard.
    *
-   * @type {int}
+   * @type {number}
    */
   this.ariaTabIndex = null;
 
@@ -190,8 +195,7 @@ MdChipsCtrl.prototype.init = function() {
 
   this.deRegister.push(
     this.$attrs.$observe('mdChipAppendDelay', function(newValue) {
-      var numberValue = parseInt(newValue);
-      ctrl.chipAppendDelay = isNaN(numberValue) ? DEFAULT_CHIP_APPEND_DELAY : numberValue;
+      ctrl.chipAppendDelay = parseInt(newValue) || DEFAULT_CHIP_APPEND_DELAY;
     })
   );
 };
@@ -251,7 +255,7 @@ MdChipsCtrl.prototype.setupWrapperAria = function() {
  * Handles the keydown event on the input element: by default <enter> appends
  * the buffer to the chip list, while backspace removes the last chip in the
  * list if the current buffer is empty.
- * @param event
+ * @param {jQuery.Event|KeyboardEvent} event
  */
 MdChipsCtrl.prototype.inputKeydown = function(event) {
   var chipBuffer = this.getChipBuffer();
@@ -300,7 +304,7 @@ MdChipsCtrl.prototype.inputKeydown = function(event) {
 
 /**
  * Returns the cursor position of the specified input element.
- * @param element HTMLInputElement
+ * @param {HTMLInputElement} element relevant input element
  * @returns {Number} Cursor Position of the input.
  */
 MdChipsCtrl.prototype.getCursorPosition = function(element) {
@@ -323,20 +327,19 @@ MdChipsCtrl.prototype.getCursorPosition = function(element) {
 
 /**
  * Updates the content of the chip at given index
- * @param chipIndex
- * @param chipContents
+ * @param {number} chipIndex
+ * @param {string} chipContents
  */
-MdChipsCtrl.prototype.updateChipContents = function(chipIndex, chipContents){
-  if(chipIndex >= 0 && chipIndex < this.items.length) {
+MdChipsCtrl.prototype.updateChipContents = function(chipIndex, chipContents) {
+  if (chipIndex >= 0 && chipIndex < this.items.length) {
     this.items[chipIndex] = chipContents;
-    this.updateNgModel();
+    this.updateNgModel(true);
   }
 };
 
 
 /**
- * Returns true if a chip is currently being edited. False otherwise.
- * @return {boolean}
+ * @return {boolean} true if a chip is currently being edited. False otherwise.
  */
 MdChipsCtrl.prototype.isEditingChip = function() {
   return !!this.$element[0].querySelector('._md-chip-editing');
@@ -355,8 +358,8 @@ MdChipsCtrl.prototype.isRemovable = function() {
 
 /**
  * Handles the keydown event on the chip elements: backspace removes the selected chip, arrow
- * keys switch which chips is active
- * @param event
+ * keys switch which chip is active.
+ * @param {KeyboardEvent} event
  */
 MdChipsCtrl.prototype.chipKeydown = function (event) {
   if (this.getChipBuffer()) return;
@@ -374,8 +377,8 @@ MdChipsCtrl.prototype.chipKeydown = function (event) {
     case this.$mdConstant.KEY_CODE.LEFT_ARROW:
       event.preventDefault();
       // By default, allow selection of -1 which will focus the input; if we're readonly, don't go
-      // below 0
-      if (this.selectedChip < 0 || (this.readonly && this.selectedChip == 0)) {
+      // below 0.
+      if (this.selectedChip < 0 || (this.readonly && this.selectedChip === 0)) {
         this.selectedChip = this.items.length;
       }
       if (this.items.length) this.selectAndFocusChipSafe(this.selectedChip - 1);
@@ -397,17 +400,18 @@ MdChipsCtrl.prototype.chipKeydown = function (event) {
  * Get the input's placeholder - uses `placeholder` when list is empty and `secondary-placeholder`
  * when the list is non-empty. If `secondary-placeholder` is not provided, `placeholder` is used
  * always.
+ * @returns {string}
  */
 MdChipsCtrl.prototype.getPlaceholder = function() {
   // Allow `secondary-placeholder` to be blank.
   var useSecondary = (this.items && this.items.length &&
-      (this.secondaryPlaceholder == '' || this.secondaryPlaceholder));
+      (this.secondaryPlaceholder === '' || this.secondaryPlaceholder));
   return useSecondary ? this.secondaryPlaceholder : this.placeholder;
 };
 
 /**
  * Removes chip at {@code index} and selects the adjacent chip.
- * @param {number} index
+ * @param {number} index adjacent chip to select
  * @param {Event=} event
  */
 MdChipsCtrl.prototype.removeAndSelectAdjacentChip = function(index, event) {
@@ -442,24 +446,24 @@ MdChipsCtrl.prototype.resetSelectedChip = function() {
  * determined as the next chip in the list, unless the target chip is the
  * last in the list, then it is the chip immediately preceding the target. If
  * there is only one item in the list, -1 is returned (select none).
- * The number returned is the index to select AFTER the target has been
- * removed.
+ * The number returned is the index to select AFTER the target has been removed.
  * If the current chip is not selected, then -1 is returned to select none.
+ * @param {number} index
+ * @returns {number}
  */
 MdChipsCtrl.prototype.getAdjacentChipIndex = function(index) {
   var len = this.items.length - 1;
-  return (len == 0) ? -1 :
-      (index == len) ? index -1 : index;
+  return (len === 0) ? -1 :
+      (index === len) ? index -1 : index;
 };
 
 /**
  * Append the contents of the buffer to the chip list. This method will first
  * call out to the md-transform-chip method, if provided.
- *
- * @param newChip
+ * @param {string} newChip chip buffer contents that will be used to create the new chip
  */
 MdChipsCtrl.prototype.appendChip = function(newChip) {
-  this.shouldFocusLastChip = true;
+  this.shouldFocusLastChip = !this.addOnBlur;
   if (this.useTransformChip && this.transformChip) {
     var transformedChip = this.transformChip({'$chip': newChip});
 
@@ -487,7 +491,7 @@ MdChipsCtrl.prototype.appendChip = function(newChip) {
 
   this.updateNgModel();
 
-  // If they provide the md-on-add attribute, notify them of the chip addition
+  // If the md-on-add attribute is specified, send a chip addition event
   if (this.useOnAdd && this.onAdd) {
     this.onAdd({ '$chip': newChip, '$index': index });
   }
@@ -526,7 +530,7 @@ MdChipsCtrl.prototype.useOnRemoveExpression = function() {
   this.useOnRemove = true;
 };
 
-/*
+/**
  * Sets whether to use the md-on-select expression. This expression is
  * bound to scope and controller in {@code MdChipsDirective} as
  * {@code onSelect}. Due to the nature of directive scope bindings, the
@@ -541,16 +545,17 @@ MdChipsCtrl.prototype.useOnSelectExpression = function() {
  * Gets the input buffer. The input buffer can be the model bound to the
  * default input item {@code this.chipBuffer}, the {@code selectedItem}
  * model of an {@code md-autocomplete}, or, through some magic, the model
- * bound to any inpput or text area element found within a
+ * bound to any input or text area element found within a
  * {@code md-input-container} element.
- * @return {string}
+ * @return {string} the input buffer
  */
 MdChipsCtrl.prototype.getChipBuffer = function() {
   var chipBuffer =  !this.userInputElement ? this.chipBuffer :
                      this.userInputNgModelCtrl ? this.userInputNgModelCtrl.$viewValue :
                      this.userInputElement[0].value;
 
-  // Ensure that the chip buffer is always a string. For example, the input element buffer might be falsy.
+  // Ensure that the chip buffer is always a string. For example, the input element buffer
+  // might be falsy.
   return angular.isString(chipBuffer) ? chipBuffer : '';
 };
 
@@ -570,6 +575,9 @@ MdChipsCtrl.prototype.resetChipBuffer = function() {
   }
 };
 
+/**
+ * @returns {boolean} true if the max chips limit has been reached, false otherwise.
+ */
 MdChipsCtrl.prototype.hasMaxChipsReached = function() {
   if (angular.isString(this.maxChips)) this.maxChips = parseInt(this.maxChips, 10) || 0;
 
@@ -578,34 +586,54 @@ MdChipsCtrl.prototype.hasMaxChipsReached = function() {
 
 /**
  * Updates the validity properties for the ngModel.
+ *
+ * TODO add the md-max-chips validator to this.ngModelCtrl.validators so that the validation will
+ * be performed automatically.
  */
 MdChipsCtrl.prototype.validateModel = function() {
   this.ngModelCtrl.$setValidity('md-max-chips', !this.hasMaxChipsReached());
   this.ngModelCtrl.$validate(); // rerun any registered validators
 };
 
-MdChipsCtrl.prototype.updateNgModel = function() {
-  this.ngModelCtrl.$setViewValue(this.items.slice());
-  // TODO add the md-max-chips validator to this.ngModelCtrl.validators so that
-  // the validation will be performed automatically on $viewValue change
-  this.validateModel();
+/**
+ * Function to handle updating the model, validation, and change notification when a chip
+ * is added, removed, or changed.
+ * @param {boolean=} skipValidation true to skip calling validateModel()
+ */
+MdChipsCtrl.prototype.updateNgModel = function(skipValidation) {
+  if (!skipValidation) {
+    this.validateModel();
+  }
+  // This will trigger ng-change to fire, even in cases where $setViewValue() would not.
+  angular.forEach(this.ngModelCtrl.$viewChangeListeners, function(listener) {
+    try {
+      listener();
+    } catch (e) {
+      this.$exceptionHandler(e);
+    }
+  });
 };
 
 /**
  * Removes the chip at the given index.
- * @param {number} index
- * @param {Event=} event
+ * @param {number} index of chip to remove
+ * @param {Event=} event optionally passed to the onRemove callback
  */
 MdChipsCtrl.prototype.removeChip = function(index, event) {
   var removed = this.items.splice(index, 1);
 
   this.updateNgModel();
+  this.ngModelCtrl.$setDirty();
 
   if (removed && removed.length && this.useOnRemove && this.onRemove) {
     this.onRemove({ '$chip': removed[0], '$index': index, '$event': event });
   }
 };
 
+/**
+ * @param {number} index location of chip to remove
+ * @param {Event=} $event
+ */
 MdChipsCtrl.prototype.removeChipAndFocusInput = function (index, $event) {
   this.removeChip(index, $event);
 
@@ -622,7 +650,7 @@ MdChipsCtrl.prototype.removeChipAndFocusInput = function (index, $event) {
 };
 /**
  * Selects the chip at `index`,
- * @param index
+ * @param {number} index location of chip to select and focus
  */
 MdChipsCtrl.prototype.selectAndFocusChipSafe = function(index) {
   // If we have no chips, or are asked to select a chip before the first, just focus the input
@@ -648,6 +676,9 @@ MdChipsCtrl.prototype.selectAndFocusChipSafe = function(index) {
   this.focusChip(index);
 };
 
+/**
+ * Focus last chip, then focus the input. This is needed for screen reader support.
+ */
 MdChipsCtrl.prototype.focusLastChipThenInput = function() {
   var ctrl = this;
 
@@ -660,6 +691,9 @@ MdChipsCtrl.prototype.focusLastChipThenInput = function() {
   }, ctrl.chipAppendDelay);
 };
 
+/**
+ * Focus the input element.
+ */
 MdChipsCtrl.prototype.focusInput = function() {
   this.selectChip(-1);
   this.onFocus();
@@ -667,7 +701,7 @@ MdChipsCtrl.prototype.focusInput = function() {
 
 /**
  * Marks the chip at the given index as selected.
- * @param index
+ * @param {number} index location of chip to select
  */
 MdChipsCtrl.prototype.selectChip = function(index) {
   if (index >= -1 && index <= this.items.length) {
@@ -683,21 +717,25 @@ MdChipsCtrl.prototype.selectChip = function(index) {
 };
 
 /**
- * Selects the chip at `index` and gives it focus.
- * @param index
+ * Selects the chip at {@code index} and gives it focus.
+ * @param {number} index location of chip to select and focus
+ * @deprecated use MdChipsCtrl.selectAndFocusChipSafe. Will be removed in 1.2.
  */
 MdChipsCtrl.prototype.selectAndFocusChip = function(index) {
   this.selectChip(index);
-  if (index != -1) {
+  if (index !== -1) {
     this.focusChip(index);
   }
 };
 
 /**
- * Call `focus()` on the chip at `index`
+ * Call {@code focus()} on the chip at {@code index}
+ * @param {number} index location of chip to focus
  */
 MdChipsCtrl.prototype.focusChip = function(index) {
-  var chipContent = this.$element[0].querySelector('md-chip[index="' + index + '"] .md-chip-content');
+  var chipContent = this.$element[0].querySelector(
+    'md-chip[index="' + index + '"] .md-chip-content'
+  );
 
   this.ariaTabIndex = index;
 
@@ -706,8 +744,8 @@ MdChipsCtrl.prototype.focusChip = function(index) {
 
 /**
  * Configures the required interactions with the ngModel Controller.
- * Specifically, set {@code this.items} to the {@code NgModelCtrl#$viewVale}.
- * @param ngModelCtrl
+ * Specifically, set {@code this.items} to the {@code NgModelController#$viewValue}.
+ * @param {NgModelController} ngModelCtrl
  */
 MdChipsCtrl.prototype.configureNgModel = function(ngModelCtrl) {
   this.ngModelCtrl = ngModelCtrl;
@@ -752,7 +790,7 @@ MdChipsCtrl.prototype.onInputBlur = function () {
 
 /**
  * Configure event bindings on input element.
- * @param inputElement
+ * @param {angular.element} inputElement
  */
 MdChipsCtrl.prototype.configureInput = function configureInput(inputElement) {
   // Find the NgModelCtrl for the input element
@@ -789,7 +827,7 @@ MdChipsCtrl.prototype.configureInput = function configureInput(inputElement) {
 
 /**
  * Configure event bindings on a user-provided input element.
- * @param inputElement
+ * @param {angular.element} inputElement
  */
 MdChipsCtrl.prototype.configureUserInput = function(inputElement) {
   this.userInputElement = inputElement;
@@ -797,7 +835,7 @@ MdChipsCtrl.prototype.configureUserInput = function(inputElement) {
   // Find the NgModelCtrl for the input element
   var ngModelCtrl = inputElement.controller('ngModel');
   // `.controller` will look in the parent as well.
-  if (ngModelCtrl != this.ngModelCtrl) {
+  if (ngModelCtrl !== this.ngModelCtrl) {
     this.userInputNgModelCtrl = ngModelCtrl;
   }
 
@@ -812,11 +850,14 @@ MdChipsCtrl.prototype.configureUserInput = function(inputElement) {
   // Bind to keydown and focus events of input
   inputElement
       .attr({ tabindex: 0 })
-      .on('keydown', function(event) { scopeApplyFn(event, ctrl.inputKeydown) })
-      .on('focus', function(event) { scopeApplyFn(event, ctrl.onInputFocus) })
-      .on('blur', function(event) { scopeApplyFn(event, ctrl.onInputBlur) });
+      .on('keydown', function(event) { scopeApplyFn(event, ctrl.inputKeydown); })
+      .on('focus', function(event) { scopeApplyFn(event, ctrl.onInputFocus); })
+      .on('blur', function(event) { scopeApplyFn(event, ctrl.onInputBlur); });
 };
 
+/**
+ * @param {MdAutocompleteCtrl} ctrl controller from the autocomplete component
+ */
 MdChipsCtrl.prototype.configureAutocomplete = function(ctrl) {
   if (ctrl) {
     this.autocompleteCtrl = ctrl;
@@ -838,8 +879,7 @@ MdChipsCtrl.prototype.configureAutocomplete = function(ctrl) {
 };
 
 /**
- * Whether the current chip buffer should be added on input blur or not.
- * @returns {boolean}
+ * @returns {boolean} Whether the current chip buffer should be added on input blur or not.
  */
 MdChipsCtrl.prototype.shouldAddOnBlur = function() {
 
@@ -847,20 +887,32 @@ MdChipsCtrl.prototype.shouldAddOnBlur = function() {
   this.validateModel();
 
   var chipBuffer = this.getChipBuffer().trim();
-  var isModelValid = this.ngModelCtrl.$valid;
+  // If the model value is empty and required is set on the element, then the model will be invalid.
+  // In that case, we still want to allow adding the chip. The main (but not only) case we want
+  // to disallow is adding a chip on blur when md-max-chips validation fails.
+  var isModelValid = this.ngModelCtrl.$isEmpty(this.ngModelCtrl.$modelValue) ||
+    this.ngModelCtrl.$valid;
   var isAutocompleteShowing = this.autocompleteCtrl && !this.autocompleteCtrl.hidden;
 
   if (this.userInputNgModelCtrl) {
     isModelValid = isModelValid && this.userInputNgModelCtrl.$valid;
   }
 
-  return this.addOnBlur && !this.requireMatch && chipBuffer && isModelValid && !isAutocompleteShowing;
+  return this.addOnBlur && !this.requireMatch && chipBuffer && isModelValid &&
+    !isAutocompleteShowing;
 };
 
+/**
+ * @returns {boolean} true if the input or a chip is focused. False otherwise.
+ */
 MdChipsCtrl.prototype.hasFocus = function () {
   return this.inputHasFocus || this.selectedChip >= 0;
 };
 
+/**
+ * @param {number} index location of content id
+ * @returns {number} unique id for the aria-owns attribute
+ */
 MdChipsCtrl.prototype.contentIdFor = function(index) {
   return this.contentIds[index];
 };

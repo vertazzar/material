@@ -6,14 +6,14 @@
  * A Sidenav QP component.
  */
 angular
-  .module('material.components.sidenav', [
-    'material.core',
-    'material.components.backdrop'
-  ])
-  .factory('$mdSidenav', SidenavService )
-  .directive('mdSidenav', SidenavDirective)
-  .directive('mdSidenavFocus', SidenavFocusDirective)
-  .controller('$mdSidenavController', SidenavController);
+    .module('material.components.sidenav', [
+        'material.core',
+        'material.components.backdrop'
+    ])
+    .factory('$mdSidenav', SidenavService )
+    .directive('mdSidenav', SidenavDirective)
+    .directive('mdSidenavFocus', SidenavFocusDirective)
+    .controller('$mdSidenavController', SidenavController);
 
 
 /**
@@ -72,69 +72,69 @@ angular
  * </hljs>
  */
 function SidenavService($mdComponentRegistry, $mdUtil, $q, $log) {
-  var errorMsg = "SideNav '{0}' is not available! Did you use md-component-id='{0}'?";
-  var service = {
+    var errorMsg = "SideNav '{0}' is not available! Did you use md-component-id='{0}'?";
+    var service = {
         find    : findInstance,     //  sync  - returns proxy API
         waitFor : waitForInstance   //  async - returns promise
-      };
+    };
 
-  /**
-   * Service API that supports three (3) usages:
-   *   $mdSidenav().find("left")                       // sync (must already exist) or returns undefined
-   *   $mdSidenav("left").toggle();                    // sync (must already exist) or returns reject promise;
-   *   $mdSidenav("left",true).then( function(left){   // async returns instance when available
+    /**
+     * Service API that supports three (3) usages:
+     *   $mdSidenav().find("left")                       // sync (must already exist) or returns undefined
+     *   $mdSidenav("left").toggle();                    // sync (must already exist) or returns reject promise;
+     *   $mdSidenav("left",true).then( function(left){   // async returns instance when available
    *    left.toggle();
    *   });
-   */
-  return function(handle, enableWait) {
-    if ( angular.isUndefined(handle) ) return service;
+     */
+    return function(handle, enableWait) {
+        if ( angular.isUndefined(handle) ) return service;
 
-    var shouldWait = enableWait === true;
-    var instance = service.find(handle, shouldWait);
-    return  !instance && shouldWait ? service.waitFor(handle) :
+        var shouldWait = enableWait === true;
+        var instance = service.find(handle, shouldWait);
+        return  !instance && shouldWait ? service.waitFor(handle) :
             !instance && angular.isUndefined(enableWait) ? addLegacyAPI(service, handle) : instance;
-  };
+    };
 
-  /**
-   * For failed instance/handle lookups, older-clients expect an response object with noops
-   * that include `rejected promise APIs`
-   */
-  function addLegacyAPI(service, handle) {
-      var falseFn  = function() { return false; };
-      var rejectFn = function() {
+    /**
+     * For failed instance/handle lookups, older-clients expect an response object with noops
+     * that include `rejected promise APIs`
+     */
+    function addLegacyAPI(service, handle) {
+        var falseFn  = function() { return false; };
+        var rejectFn = function() {
             return $q.when($mdUtil.supplant(errorMsg, [handle || ""]));
-          };
+        };
 
-      return angular.extend({
-        isLockedOpen : falseFn,
-        isOpen       : falseFn,
-        toggle       : rejectFn,
-        open         : rejectFn,
-        close        : rejectFn,
-        onClose      : angular.noop,
-        then : function(callback) {
-          return waitForInstance(handle)
-            .then(callback || angular.noop);
-        }
-       }, service);
+        return angular.extend({
+            isLockedOpen : falseFn,
+            isOpen       : falseFn,
+            toggle       : rejectFn,
+            open         : rejectFn,
+            close        : rejectFn,
+            onClose      : angular.noop,
+            then : function(callback) {
+                return waitForInstance(handle)
+                    .then(callback || angular.noop);
+            }
+        }, service);
     }
     /**
      * Synchronously lookup the controller instance for the specified sidNav instance which has been
      * registered with the markup `md-component-id`
      */
     function findInstance(handle, shouldWait) {
-      var instance = $mdComponentRegistry.get(handle);
+        var instance = $mdComponentRegistry.get(handle);
 
-      if (!instance && !shouldWait) {
+        if (!instance && !shouldWait) {
 
-        // Report missing instance
-        $log.error( $mdUtil.supplant(errorMsg, [handle || ""]) );
+            // Report missing instance
+            $log.error( $mdUtil.supplant(errorMsg, [handle || ""]) );
 
-        // The component has not registered itself... most like NOT yet created
-        // return null to indicate that the Sidenav is not in the DOM
-        return undefined;
-      }
-      return instance;
+            // The component has not registered itself... most like NOT yet created
+            // return null to indicate that the Sidenav is not in the DOM
+            return undefined;
+        }
+        return instance;
     }
 
     /**
@@ -142,7 +142,7 @@ function SidenavService($mdComponentRegistry, $mdUtil, $q, $log) {
      * Deferred lookup of component instance using $component registry
      */
     function waitForInstance(handle) {
-      return $mdComponentRegistry.when(handle).catch($log.error);
+        return $mdComponentRegistry.when(handle).catch($log.error);
     }
 }
 /**
@@ -169,13 +169,13 @@ function SidenavService($mdComponentRegistry, $mdUtil, $q, $log) {
  * </hljs>
  **/
 function SidenavFocusDirective() {
-  return {
-    restrict: 'A',
-    require: '^mdSidenav',
-    link: function(scope, element, attr, sidenavCtrl) {
-      // @see $mdUtil.findFocusTarget(...)
-    }
-  };
+    return {
+        restrict: 'A',
+        require: '^mdSidenav',
+        link: function(scope, element, attr, sidenavCtrl) {
+            // @see $mdUtil.findFocusTarget(...)
+        }
+    };
 }
 /**
  * @ngdoc directive
@@ -239,7 +239,7 @@ function SidenavFocusDirective() {
  * @param {string=} md-disable-scroll-target Selector, pointing to an element, whose scrolling will
  * be disabled when the sidenav is opened. By default this is the sidenav's direct parent.
  *
-* The $mdMedia() service is exposed to the is-locked-open attribute, which
+ * The $mdMedia() service is exposed to the is-locked-open attribute, which
  * can be given a media query or one of the `sm`, `gt-sm`, `md`, `gt-md`, `lg` or `gt-lg` presets.
  * Examples:
  *
@@ -249,271 +249,271 @@ function SidenavFocusDirective() {
  */
 function SidenavDirective($mdMedia, $mdUtil, $mdConstant, $mdTheming, $mdInteraction, $animate,
                           $compile, $parse, $log, $q, $document, $window, $$rAF) {
-  return {
-    restrict: 'E',
-    scope: {
-      isOpen: '=?mdIsOpen'
-    },
-    controller: '$mdSidenavController',
-    compile: function(element) {
-      element.addClass('md-closed').attr('tabIndex', '-1');
-      return postLink;
-    }
-  };
-
-  /**
-   * Directive Post Link function...
-   */
-  function postLink(scope, element, attr, sidenavCtrl) {
-    var lastParentOverFlow;
-    var backdrop;
-    var disableScrollTarget = null;
-    var triggeringInteractionType;
-    var triggeringElement = null;
-    var previousContainerStyles;
-    var promise = $q.when(true);
-    var isLockedOpenParsed = $parse(attr.mdIsLockedOpen);
-    var ngWindow = angular.element($window);
-    var isLocked = function() {
-      return isLockedOpenParsed(scope.$parent, {
-        $media: function(arg) {
-          $log.warn("$media is deprecated for is-locked-open. Use $mdMedia instead.");
-          return $mdMedia(arg);
+    return {
+        restrict: 'E',
+        scope: {
+            isOpen: '=?mdIsOpen'
         },
-        $mdMedia: $mdMedia
-      });
+        controller: '$mdSidenavController',
+        compile: function(element) {
+            element.addClass('md-closed').attr('tabIndex', '-1');
+            return postLink;
+        }
     };
 
-
-    if (attr.mdDisableScrollTarget) {
-      disableScrollTarget = $document[0].querySelector(attr.mdDisableScrollTarget);
-
-      if (disableScrollTarget) {
-        disableScrollTarget = angular.element(disableScrollTarget);
-      } else {
-        $log.warn($mdUtil.supplant('mdSidenav: couldn\'t find element matching ' +
-          'selector "{selector}". Falling back to parent.', { selector: attr.mdDisableScrollTarget }));
-      }
-    }
-
-    if (!disableScrollTarget) {
-      disableScrollTarget = element.parent();
-    }
-
-    // Only create the backdrop if the backdrop isn't disabled.
-    if (!attr.hasOwnProperty('mdDisableBackdrop')) {
-      backdrop = $mdUtil.createBackdrop(scope, "md-sidenav-backdrop md-opaque ng-enter");
-      scope.backdrop = backdrop;
-    }
-    
-    // If md-disable-close-events is set on the sidenav we will disable
-    // backdrop click and Escape key events
-    if (attr.hasOwnProperty('mdDisableCloseEvents')) {
-      var disableCloseEvents = true;
-    }
-
-    element.addClass('_md');     // private md component indicator for styling
-    $mdTheming(element);
-
-    // The backdrop should inherit the sidenavs theme,
-    // because the backdrop will take its parent theme by default.
-    if ( backdrop ) $mdTheming.inherit(backdrop, element);
-
-    element.on('$destroy', function() {
-      backdrop && backdrop.remove();
-      sidenavCtrl.destroy();
-    });
-
-    scope.$on('$destroy', function(){
-      backdrop && backdrop.remove();
-    });
-
-    scope.$watch(isLocked, updateIsLocked);
-    scope.$watch('isOpen', updateIsOpen);
-
-
-    // Publish special accessor for the Controller instance
-    sidenavCtrl.$toggleOpen = toggleOpen;
-
     /**
-     * Toggle the DOM classes to indicate `locked`
-     * @param isLocked
+     * Directive Post Link function...
      */
-    function updateIsLocked(isLocked, oldValue) {
-      scope.isLockedOpen = isLocked;
-      if (isLocked === oldValue) {
-        element.toggleClass('md-locked-open', !!isLocked);
-      } else {
-        $animate[isLocked ? 'addClass' : 'removeClass'](element, 'md-locked-open');
-      }
-      if (backdrop) {
-        backdrop.toggleClass('md-locked-open', !!isLocked);
-      }
-    }
+    function postLink(scope, element, attr, sidenavCtrl) {
+        var lastParentOverFlow;
+        var backdrop;
+        var disableScrollTarget = null;
+        var triggeringInteractionType;
+        var triggeringElement = null;
+        var previousContainerStyles;
+        var promise = $q.when(true);
+        var isLockedOpenParsed = $parse(attr.mdIsLockedOpen);
+        var ngWindow = angular.element($window);
+        var isLocked = function() {
+            return isLockedOpenParsed(scope.$parent, {
+                $media: function(arg) {
+                    $log.warn("$media is deprecated for is-locked-open. Use $mdMedia instead.");
+                    return $mdMedia(arg);
+                },
+                $mdMedia: $mdMedia
+            });
+        };
 
-    /**
-     * Toggle the SideNav view and attach/detach listeners
-     * @param isOpen
-     */
-    function updateIsOpen(isOpen) {
-      // Support deprecated md-sidenav-focus attribute as fallback
-      var focusEl = $mdUtil.findFocusTarget(element) || $mdUtil.findFocusTarget(element,'[md-sidenav-focus]') || element;
-      var parent = element.parent();
 
-      // If the user hasn't set the disable close events property we are adding
-      // click and escape events to close the sidenav
-      if ( !disableCloseEvents ) {
-        parent[isOpen ? 'on' : 'off']('keydown', onKeyDown);
-        if (backdrop) backdrop[isOpen ? 'on' : 'off']('click', close);
-      }
+        if (attr.mdDisableScrollTarget) {
+            disableScrollTarget = $document[0].querySelector(attr.mdDisableScrollTarget);
 
-      var restorePositioning = updateContainerPositions(parent, isOpen);
-
-      if ( isOpen ) {
-        // Capture upon opening..
-        triggeringElement = $document[0].activeElement;
-        triggeringInteractionType = $mdInteraction.getLastInteractionType();
-      }
-
-      disableParentScroll(isOpen);
-
-      return promise = $q.all([
-        isOpen && backdrop ? $animate.enter(backdrop, parent) : backdrop ?
-                             $animate.leave(backdrop) : $q.when(true),
-        scope.softOpen ? $q.when(true) : $animate[isOpen ? 'removeClass' : 'addClass'](element, 'md-closed')
-      ]).then(function() {
-          delete scope.softOpen;
-        // Perform focus when animations are ALL done...
-        if (scope.isOpen) {
-          $$rAF(function() {
-            // Notifies child components that the sidenav was opened. Should wait
-            // a frame in order to allow for the element height to be computed.
-            ngWindow.triggerHandler('resize');
-          });
-
-          focusEl && focusEl.focus();
+            if (disableScrollTarget) {
+                disableScrollTarget = angular.element(disableScrollTarget);
+            } else {
+                $log.warn($mdUtil.supplant('mdSidenav: couldn\'t find element matching ' +
+                    'selector "{selector}". Falling back to parent.', { selector: attr.mdDisableScrollTarget }));
+            }
         }
 
-        // Restores the positioning on the sidenav and backdrop.
-        restorePositioning && restorePositioning();
-      });
-    }
+        if (!disableScrollTarget) {
+            disableScrollTarget = element.parent();
+        }
 
-    function updateContainerPositions(parent, willOpen) {
-      var drawerEl = element[0];
-      var scrollTop = parent[0].scrollTop;
+        // Only create the backdrop if the backdrop isn't disabled.
+        if (!attr.hasOwnProperty('mdDisableBackdrop')) {
+            backdrop = $mdUtil.createBackdrop(scope, "md-sidenav-backdrop md-opaque ng-enter");
+            scope.backdrop = backdrop;
+        }
 
-      if (willOpen && scrollTop) {
-        previousContainerStyles = {
-          top: drawerEl.style.top,
-          bottom: drawerEl.style.bottom,
-          height: drawerEl.style.height
-        };
+        // If md-disable-close-events is set on the sidenav we will disable
+        // backdrop click and Escape key events
+        if (attr.hasOwnProperty('mdDisableCloseEvents')) {
+            var disableCloseEvents = true;
+        }
 
-        // When the parent is scrolled down, then we want to be able to show the sidenav at the current scroll
-        // position. We're moving the sidenav down to the correct scroll position and apply the height of the
-        // parent, to increase the performance. Using 100% as height, will impact the performance heavily.
-        var positionStyle = {
-          top: scrollTop + 'px',
-          bottom: 'auto',
-          height: parent[0].clientHeight + 'px'
-        };
+        element.addClass('_md');     // private md component indicator for styling
+        $mdTheming(element);
 
-        // Apply the new position styles to the sidenav and backdrop.
-        element.css(positionStyle);
-        backdrop.css(positionStyle);
-      }
+        // The backdrop should inherit the sidenavs theme,
+        // because the backdrop will take its parent theme by default.
+        if ( backdrop ) $mdTheming.inherit(backdrop, element);
 
-      // When the sidenav is closing and we have previous defined container styles,
-      // then we return a restore function, which resets the sidenav and backdrop.
-      if (!willOpen && previousContainerStyles) {
-        return function() {
-          drawerEl.style.top = previousContainerStyles.top;
-          drawerEl.style.bottom = previousContainerStyles.bottom;
-          drawerEl.style.height = previousContainerStyles.height;
-
-          backdrop[0].style.top = null;
-          backdrop[0].style.bottom = null;
-          backdrop[0].style.height = null;
-
-          previousContainerStyles = null;
-        };
-      }
-    }
-
-    /**
-     * Prevent parent scrolling (when the SideNav is open)
-     */
-    function disableParentScroll(disabled) {
-      if ( disabled && !lastParentOverFlow ) {
-        lastParentOverFlow = disableScrollTarget.css('overflow');
-        disableScrollTarget.css('overflow', 'hidden');
-      } else if (angular.isDefined(lastParentOverFlow)) {
-        disableScrollTarget.css('overflow', lastParentOverFlow);
-        lastParentOverFlow = undefined;
-      }
-    }
-
-    /**
-     * Toggle the sideNav view and publish a promise to be resolved when
-     * the view animation finishes.
-     *
-     * @param isOpen
-     * @returns {*}
-     */
-    function toggleOpen( isOpen, soft) {
-      if (scope.isOpen == isOpen ) {
-
-        return $q.when(true);
-
-      } else {
-        if (scope.isOpen && sidenavCtrl.onCloseCb) sidenavCtrl.onCloseCb();
-
-        return $q(function(resolve){
-          // Toggle value to force an async `updateIsOpen()` to run
-          scope.isOpen = isOpen;
-          scope.softOpen = soft;
-
-          $mdUtil.nextTick(function() {
-            // When the current `updateIsOpen()` animation finishes
-            promise.then(function(result) {
-
-              if ( !scope.isOpen && triggeringElement && triggeringInteractionType === 'keyboard') {
-                // reset focus to originating element (if available) upon close
-                triggeringElement.focus();
-                triggeringElement = null;
-              }
-
-              resolve(result);
-            });
-          });
-
+        element.on('$destroy', function() {
+            backdrop && backdrop.remove();
+            sidenavCtrl.destroy();
         });
 
-      }
+        scope.$on('$destroy', function(){
+            backdrop && backdrop.remove();
+        });
+
+        scope.$watch(isLocked, updateIsLocked);
+        scope.$watch('isOpen', updateIsOpen);
+
+
+        // Publish special accessor for the Controller instance
+        sidenavCtrl.$toggleOpen = toggleOpen;
+
+        /**
+         * Toggle the DOM classes to indicate `locked`
+         * @param isLocked
+         */
+        function updateIsLocked(isLocked, oldValue) {
+            scope.isLockedOpen = isLocked;
+            if (isLocked === oldValue) {
+                element.toggleClass('md-locked-open', !!isLocked);
+            } else {
+                $animate[isLocked ? 'addClass' : 'removeClass'](element, 'md-locked-open');
+            }
+            if (backdrop) {
+                backdrop.toggleClass('md-locked-open', !!isLocked);
+            }
+        }
+
+        /**
+         * Toggle the SideNav view and attach/detach listeners
+         * @param isOpen
+         */
+        function updateIsOpen(isOpen) {
+            // Support deprecated md-sidenav-focus attribute as fallback
+            var focusEl = $mdUtil.findFocusTarget(element) || $mdUtil.findFocusTarget(element,'[md-sidenav-focus]') || element;
+            var parent = element.parent();
+
+            // If the user hasn't set the disable close events property we are adding
+            // click and escape events to close the sidenav
+            if ( !disableCloseEvents ) {
+                parent[isOpen ? 'on' : 'off']('keydown', onKeyDown);
+                if (backdrop) backdrop[isOpen ? 'on' : 'off']('click', close);
+            }
+
+            var restorePositioning = updateContainerPositions(parent, isOpen);
+
+            if ( isOpen ) {
+                // Capture upon opening..
+                triggeringElement = $document[0].activeElement;
+                triggeringInteractionType = $mdInteraction.getLastInteractionType();
+            }
+
+            disableParentScroll(isOpen);
+
+            return promise = $q.all([
+                isOpen && backdrop ? $animate.enter(backdrop, parent) : backdrop ?
+                    $animate.leave(backdrop) : $q.when(true),
+                scope.softOpen ? $q.when(true) : $animate[isOpen ? 'removeClass' : 'addClass'](element, 'md-closed')
+            ]).then(function() {
+                delete scope.softOpen;
+                // Perform focus when animations are ALL done...
+                if (scope.isOpen) {
+                    $$rAF(function() {
+                        // Notifies child components that the sidenav was opened. Should wait
+                        // a frame in order to allow for the element height to be computed.
+                        ngWindow.triggerHandler('resize');
+                    });
+
+                    focusEl && focusEl.focus();
+                }
+
+                // Restores the positioning on the sidenav and backdrop.
+                restorePositioning && restorePositioning();
+            });
+        }
+
+        function updateContainerPositions(parent, willOpen) {
+            var drawerEl = element[0];
+            var scrollTop = parent[0].scrollTop;
+
+            if (willOpen && scrollTop) {
+                previousContainerStyles = {
+                    top: drawerEl.style.top,
+                    bottom: drawerEl.style.bottom,
+                    height: drawerEl.style.height
+                };
+
+                // When the parent is scrolled down, then we want to be able to show the sidenav at the current scroll
+                // position. We're moving the sidenav down to the correct scroll position and apply the height of the
+                // parent, to increase the performance. Using 100% as height, will impact the performance heavily.
+                var positionStyle = {
+                    top: scrollTop + 'px',
+                    bottom: 'auto',
+                    height: parent[0].clientHeight + 'px'
+                };
+
+                // Apply the new position styles to the sidenav and backdrop.
+                element.css(positionStyle);
+                backdrop.css(positionStyle);
+            }
+
+            // When the sidenav is closing and we have previous defined container styles,
+            // then we return a restore function, which resets the sidenav and backdrop.
+            if (!willOpen && previousContainerStyles) {
+                return function() {
+                    drawerEl.style.top = previousContainerStyles.top;
+                    drawerEl.style.bottom = previousContainerStyles.bottom;
+                    drawerEl.style.height = previousContainerStyles.height;
+
+                    backdrop[0].style.top = null;
+                    backdrop[0].style.bottom = null;
+                    backdrop[0].style.height = null;
+
+                    previousContainerStyles = null;
+                };
+            }
+        }
+
+        /**
+         * Prevent parent scrolling (when the SideNav is open)
+         */
+        function disableParentScroll(disabled) {
+            if ( disabled && !lastParentOverFlow ) {
+                lastParentOverFlow = disableScrollTarget.css('overflow');
+                disableScrollTarget.css('overflow', 'hidden');
+            } else if (angular.isDefined(lastParentOverFlow)) {
+                disableScrollTarget.css('overflow', lastParentOverFlow);
+                lastParentOverFlow = undefined;
+            }
+        }
+
+        /**
+         * Toggle the sideNav view and publish a promise to be resolved when
+         * the view animation finishes.
+         *
+         * @param isOpen
+         * @returns {*}
+         */
+        function toggleOpen( isOpen, soft) {
+            if (scope.isOpen == isOpen ) {
+
+                return $q.when(true);
+
+            } else {
+                if (scope.isOpen && sidenavCtrl.onCloseCb) sidenavCtrl.onCloseCb();
+
+                return $q(function(resolve){
+                    // Toggle value to force an async `updateIsOpen()` to run
+                    scope.isOpen = isOpen;
+                    scope.softOpen = soft;
+
+                    $mdUtil.nextTick(function() {
+                        // When the current `updateIsOpen()` animation finishes
+                        promise.then(function(result) {
+
+                            if ( !scope.isOpen && triggeringElement && triggeringInteractionType === 'keyboard') {
+                                // reset focus to originating element (if available) upon close
+                                triggeringElement.focus();
+                                triggeringElement = null;
+                            }
+
+                            resolve(result);
+                        });
+                    });
+
+                });
+
+            }
+        }
+
+        /**
+         * Auto-close sideNav when the `escape` key is pressed.
+         * @param evt
+         */
+        function onKeyDown(ev) {
+            var isEscape = (ev.keyCode === $mdConstant.KEY_CODE.ESCAPE);
+            return isEscape ? close(ev) : $q.when(true);
+        }
+
+        /**
+         * With backdrop `clicks` or `escape` key-press, immediately
+         * apply the CSS close transition... Then notify the controller
+         * to close() and perform its own actions.
+         */
+        function close(ev) {
+            ev.preventDefault();
+
+            return sidenavCtrl.close();
+        }
+
     }
-
-    /**
-     * Auto-close sideNav when the `escape` key is pressed.
-     * @param evt
-     */
-    function onKeyDown(ev) {
-      var isEscape = (ev.keyCode === $mdConstant.KEY_CODE.ESCAPE);
-      return isEscape ? close(ev) : $q.when(true);
-    }
-
-    /**
-     * With backdrop `clicks` or `escape` key-press, immediately
-     * apply the CSS close transition... Then notify the controller
-     * to close() and perform its own actions.
-     */
-    function close(ev) {
-      ev.preventDefault();
-
-      return sidenavCtrl.close();
-    }
-
-  }
 }
 
 /*
@@ -524,46 +524,46 @@ function SidenavDirective($mdMedia, $mdUtil, $mdConstant, $mdTheming, $mdInterac
  */
 function SidenavController($scope, $attrs, $mdComponentRegistry, $q, $interpolate) {
 
-  var self = this;
+    var self = this;
 
-  // Use Default internal method until overridden by directive postLink
+    // Use Default internal method until overridden by directive postLink
 
-  // Synchronous getters
-  self.isOpen = function() { return !!$scope.isOpen; };
-  self.isLockedOpen = function() { return !!$scope.isLockedOpen; };
+    // Synchronous getters
+    self.isOpen = function() { return !!$scope.isOpen; };
+    self.isLockedOpen = function() { return !!$scope.isLockedOpen; };
 
-  // Synchronous setters
-  self.onClose = function (callback) {
-    self.onCloseCb = callback;
-    return self;
-  };
+    // Synchronous setters
+    self.onClose = function (callback) {
+        self.onCloseCb = callback;
+        return self;
+    };
 
-  // Async actions
-  self.open   = function() { return self.$toggleOpen( true );  };
-  self.openSoft   = function() { return self.$toggleOpen( true, true);  };
-  self.close  = function() { return self.$toggleOpen( false ); };
-  self.closeSoft  = function() { return self.$toggleOpen( false, true); };
-  self.toggle = function() { return self.$toggleOpen( !$scope.isOpen );  };
-  self.$toggleOpen = function(value) { return $q.when($scope.isOpen = value); };
-  self.getBackdrop = function () {
-    return $scope.backdrop;
-  };
+    // Async actions
+    self.open   = function() { return self.$toggleOpen( true );  };
+    self.openSoft   = function() { return self.$toggleOpen( true, true);  };
+    self.close  = function() { return self.$toggleOpen( false ); };
+    self.closeSoft  = function() { return self.$toggleOpen( false, true); };
+    self.toggle = function() { return self.$toggleOpen( !$scope.isOpen );  };
+    self.$toggleOpen = function(value) { return $q.when($scope.isOpen = value); };
+    self.getBackdrop = function () {
+        return $scope.backdrop;
+    };
 
-  // Evaluate the component id.
-  var rawId = $attrs.mdComponentId;
-  var hasDataBinding = rawId && rawId.indexOf($interpolate.startSymbol()) > -1;
-  var componentId = hasDataBinding ? $interpolate(rawId)($scope.$parent) : rawId;
+    // Evaluate the component id.
+    var rawId = $attrs.mdComponentId;
+    var hasDataBinding = rawId && rawId.indexOf($interpolate.startSymbol()) > -1;
+    var componentId = hasDataBinding ? $interpolate(rawId)($scope.$parent) : rawId;
 
-  // Register the component.
-  self.destroy = $mdComponentRegistry.register(self, componentId);
+    // Register the component.
+    self.destroy = $mdComponentRegistry.register(self, componentId);
 
-  // Watch and update the component, if the id has changed.
-  if (hasDataBinding) {
-    $attrs.$observe('mdComponentId', function(id) {
-      if (id && id !== self.$$mdHandle) {
-        self.destroy(); // `destroy` only deregisters the old component id so we can add the new one.
-        self.destroy = $mdComponentRegistry.register(self, id);
-      }
-    });
-  }
+    // Watch and update the component, if the id has changed.
+    if (hasDataBinding) {
+        $attrs.$observe('mdComponentId', function(id) {
+            if (id && id !== self.$$mdHandle) {
+                self.destroy(); // `destroy` only deregisters the old component id so we can add the new one.
+                self.destroy = $mdComponentRegistry.register(self, id);
+            }
+        });
+    }
 }

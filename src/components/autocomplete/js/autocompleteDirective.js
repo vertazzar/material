@@ -45,8 +45,8 @@ angular
  *
  * **Autocomplete Dropdown Items Rendering**
  *
- * The `md-autocomplete` uses the the <a ng-href="api/directive/mdVirtualRepeatContainer">VirtualRepeat</a>
- * directive for displaying the results inside of the dropdown.<br/>
+ * The `md-autocomplete` uses the the <a ng-href="api/directive/mdVirtualRepeat">
+ *   mdVirtualRepeat</a> directive for displaying the results inside of the dropdown.<br/>
  *
  * > When encountering issues regarding the item template please take a look at the
  *   <a ng-href="api/directive/mdVirtualRepeatContainer">VirtualRepeatContainer</a> documentation.
@@ -54,13 +54,15 @@ angular
  * **Autocomplete inside of a Virtual Repeat**
  *
  * When using the `md-autocomplete` directive inside of a
- * <a ng-href="api/directive/mdVirtualRepeatContainer">VirtualRepeatContainer</a> the dropdown items might
- * not update properly, because caching of the results is enabled by default.
+ * <a ng-href="api/directive/mdVirtualRepeatContainer">VirtualRepeatContainer</a> the dropdown items
+ * might not update properly, because caching of the results is enabled by default.
  *
- * The autocomplete will then show invalid dropdown items, because the VirtualRepeat only updates the
- * scope bindings, rather than re-creating the `md-autocomplete` and the previous cached results will be used.
+ * The autocomplete will then show invalid dropdown items, because the Virtual Repeat only updates
+ * the scope bindings rather than re-creating the `md-autocomplete`. This means that the previous
+ * cached results will be used.
  *
- * > To avoid such problems ensure that the autocomplete does not cache any results.
+ * > To avoid such problems, ensure that the autocomplete does not cache any results via
+ * `md-no-cache="true"`:
  *
  * <hljs lang="html">
  *   <md-autocomplete
@@ -106,11 +108,10 @@ angular
  * @param {string=} md-menu-class This class will be applied to the dropdown menu for styling.
  * @param {string=} md-menu-container-class This class will be applied to the parent container
  *     of the dropdown panel.
- * @param {string=} md-input-class This will be applied to the input for styling. This attribute is only valid when a `md-floating-label` is defined
+ * @param {string=} md-input-class This will be applied to the input for styling. This attribute
+ *     is only valid when a `md-floating-label` is defined.
  * @param {string=} md-floating-label This will add a floating label to autocomplete and wrap it in
  *     `md-input-container`
- * @param {string=} md-input-name The name attribute given to the input element to be used with
- *     FormController
  * @param {string=} md-select-on-focus When present the inputs text will be automatically selected
  *     on focus.
  * @param {string=} md-input-id An ID to be added to the input element.
@@ -128,7 +129,7 @@ angular
  *     When the dropdown doesn't fit into the viewport, the dropdown will shrink
  *     as much as possible.
  * @param {string=} md-dropdown-position Overrides the default dropdown position. Options: `top`, `bottom`.
- * @param {string=} ng-trim If set to false, the search text will be not trimmed automatically.
+ * @param {boolean=} ng-trim If set to false, the search text will be not trimmed automatically.
  *     Defaults to true.
  * @param {string=} ng-pattern Adds the pattern validator to the ngModel of the search text.
  *     See the [ngPattern Directive](https://docs.angularjs.org/api/ng/directive/ngPattern)
@@ -166,14 +167,26 @@ angular
  *     different parts that make up our component.
  *
  * ### Clear button for the input
- * By default, for floating label autocomplete's the clear button is not showing up
- * ([See specs](https://material.google.com/components/text-fields.html#text-fields-auto-complete-text-field))
+ * By default, the clear button is displayed when there is input. This aligns with the spec's
+ * [Search Pattern](https://material.io/guidelines/patterns/search.html#search-in-app-search).
+ * In floating label mode, when `md-floating-label="My Label"` is applied, the clear button is not displayed
+ * by default (see the spec's
+ * [Autocomplete Text Field](https://material.io/guidelines/components/text-fields.html#text-fields-layout)).
  *
- * Nevertheless, developers are able to explicitly toggle the clear button for all types of autocomplete's.
+ * Nevertheless, developers are able to explicitly toggle the clear button for all autocomplete components
+ * with `md-clear-button`.
  *
  * <hljs lang="html">
  *   <md-autocomplete ... md-clear-button="true"></md-autocomplete>
  *   <md-autocomplete ... md-clear-button="false"></md-autocomplete>
+ * </hljs>
+ *
+ * In previous versions, the clear button was always hidden when the component was disabled.
+ * This changed in `1.1.5` to give the developer control of this behavior. This example
+ * will hide the clear button only when the component is disabled.
+ *
+ * <hljs lang="html">
+ *   <md-autocomplete ... ng-disabled="disabled" md-clear-button="!disabled"></md-autocomplete>
  * </hljs>
  *
  * ### Example with validation
@@ -280,7 +293,8 @@ function MdAutocomplete ($$mdSvgRegistry) {
         // be added to the element in the template function.
         ctrl.hasNotFound = !!element.attr('md-has-not-found');
 
-        // By default the inset autocomplete should show the clear button when not explicitly overwritten.
+        // By default the inset autocomplete should show the clear button when not explicitly overwritten
+        // or in floating label mode.
         if (!angular.isDefined(attrs.mdClearButton) && !scope.floatingLabel) {
           scope.clearButton = true;
         }

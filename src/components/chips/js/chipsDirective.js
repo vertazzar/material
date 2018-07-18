@@ -73,7 +73,8 @@
    * </hljs>
    *
    * In some cases, you have an autocomplete inside of the `md-chips`.<br/>
-   * When the maximum amount of chips has been reached, you can also disable the autocomplete selection.<br/>
+   * When the maximum amount of chips has been reached, you can also disable the autocomplete
+   * selection.<br/>
    * Here is an example markup.
    *
    * <hljs lang="html">
@@ -96,8 +97,11 @@
    *
    * Please refer to the documentation of this option (below) for more information.
    *
-   * @param {string|object=} ng-model A model to which the list of items will be bound.
-   * @param {expression=} ng-change AngularJS expression to be executed on chip addition/removal
+   * @param {expression} ng-model Assignable AngularJS expression to be data-bound to the list of
+   *    chips. The expression should evaluate to a `string` or `Object` Array. The type of this
+   *    array should align with the return value of `md-transform-chip`.
+   * @param {expression=} ng-change AngularJS expression to be executed on chip addition, removal,
+   *    or content change.
    * @param {string=} placeholder Placeholder text that will be forwarded to the input.
    * @param {string=} secondary-placeholder Placeholder text that will be forwarded to the input,
    *    displayed when there is at least one item in the list
@@ -106,18 +110,21 @@
    * @param {boolean=} readonly Disables list manipulation (deleting or adding list items), hiding
    *    the input and delete buttons. If no `ng-model` is provided, the chips will automatically be
    *    marked as readonly.<br/><br/>
-   *    When `md-removable` is not defined, the `md-remove` behavior will be overwritten and disabled.
-   * @param {string=} md-enable-chip-edit Set this to "true" to enable editing of chip contents. The user can
-   *    go into edit mode with pressing "space", "enter", or double clicking on the chip. Chip edit is only
-   *    supported for chips with basic template.
+   *    When `md-removable` is not defined, the `md-remove` behavior will be overwritten and
+   *    disabled.
+   * @param {boolean=} md-enable-chip-edit Set this to `"true"` to enable editing of chip contents.
+   *    The user can go into edit mode by pressing the `space` or `enter` keys, or by double
+   *    clicking on the chip. Chip editing is only supported for chips using the basic template.
+   *    **Note:** This attribute is only evaluated once; it is not watched.
    * @param {boolean=} ng-required Whether ng-model is allowed to be empty or not.
    * @param {number=} md-max-chips The maximum number of chips allowed to add through user input.
    *    <br/><br/>The validation property `md-max-chips` can be used when the max chips
    *    amount is reached.
-   * @param {boolean=} md-add-on-blur When set to true, remaining text inside of the input will
-   *    be converted into a new chip on blur.
-   * @param {expression} md-transform-chip An expression of form `myFunction($chip)` that when called
-   *    expects one of the following return values:
+   * @param {boolean=} md-add-on-blur When set to `"true"`, the remaining text inside of the input
+   *    will be converted into a new chip on blur.
+   *    **Note:** This attribute is only evaluated once; it is not watched.
+   * @param {expression} md-transform-chip An expression of form `myFunction($chip)` that when
+   *    called expects one of the following return values:
    *    - an object representing the `$chip` input string
    *    - `undefined` to simply add the `$chip` input string, or
    *    - `null` to prevent the chip from being appended
@@ -126,7 +133,7 @@
    * @param {expression=} md-on-remove An expression which will be called when a chip has been
    *    removed with `$chip`, `$index`, and `$event` available as parameters.
    * @param {expression=} md-on-select An expression which will be called when a chip is selected.
-   * @param {boolean} md-require-match If true, and the chips template contains an autocomplete,
+   * @param {boolean=} md-require-match If true, and the chips template contains an autocomplete,
    *    only allow selection of pre-defined chips (i.e. you cannot add new ones).
    * @param {string=} input-aria-label A string read by screen readers to identify the input.
    * @param {string=} container-hint A string read by screen readers informing users of how to
@@ -193,13 +200,13 @@
           {{$mdChipsCtrl.containerHint}}\
         </span>\
         <md-chip ng-repeat="$chip in $mdChipsCtrl.items"\
-            index="{{$index}}"\
+            index="{{$index}}" aria-label="{{$mdChipsCtrl.deleteHint}}"\
             ng-class="{\'md-focused\': $mdChipsCtrl.selectedChip == $index, \'md-readonly\': !$mdChipsCtrl.ngModelCtrl || $mdChipsCtrl.readonly}">\
           <div class="md-chip-content"\
               tabindex="{{$mdChipsCtrl.ariaTabIndex == $index ? 0 : -1}}"\
               id="{{$mdChipsCtrl.contentIdFor($index)}}"\
               role="option"\
-              aria-selected="{{$mdChipsCtrl.selectedChip == $index}}" \
+              aria-selected="{{$mdChipsCtrl.selectedChip === $index}}"\
               aria-posinset="{{$index}}"\
               ng-click="!$mdChipsCtrl.readonly && $mdChipsCtrl.focusChip($index)"\
               ng-focus="!$mdChipsCtrl.readonly && $mdChipsCtrl.selectChip($index)"\
@@ -264,23 +271,24 @@
       bindToController: true,
       compile: compile,
       scope: {
-        readonly: '=readonly',
-        removable: '=mdRemovable',
-        placeholder: '@',
-        secondaryPlaceholder: '@',
-        maxChips: '@mdMaxChips',
+        readonly: '=?readonly',
+        removable: '=?mdRemovable',
+        placeholder: '@?',
+        secondaryPlaceholder: '@?',
+        maxChips: '@?mdMaxChips',
         transformChip: '&mdTransformChip',
-        onAppend: '&mdOnAppend',
-        onAdd: '&mdOnAdd',
-        onRemove: '&mdOnRemove',
-        onSelect: '&mdOnSelect',
-        inputAriaLabel: '@',
-        containerHint: '@',
-        deleteHint: '@',
-        deleteButtonLabel: '@',
+        onAppend: '&?mdOnAppend',
+        onAdd: '&?mdOnAdd',
+        onRemove: '&?mdOnRemove',
+        onSelect: '&?mdOnSelect',
+        inputAriaLabel: '@?',
+        containerHint: '@?',
+        deleteHint: '@?',
+        deleteButtonLabel: '@?',
         separatorKeys: '=?mdSeparatorKeys',
         requireMatch: '=?mdRequireMatch',
-        chipAppendDelayString: '@?mdChipAppendDelay'
+        chipAppendDelayString: '@?mdChipAppendDelay',
+        ngChange: '&?'
       }
     };
 
@@ -355,7 +363,7 @@
 
         $mdTheming(element);
         var mdChipsCtrl = controllers[0];
-        if(chipTemplate) {
+        if (chipTemplate) {
           // Chip editing functionality assumes we are using the default chip template.
           mdChipsCtrl.enableChipEdit = false;
         }
@@ -368,7 +376,12 @@
 
         element
             .attr({ tabindex: -1 })
-            .on('focus', function () { mdChipsCtrl.onFocus(); });
+            .on('focus', function () { mdChipsCtrl.onFocus(); })
+            .on('click', function () {
+              if (!mdChipsCtrl.readonly && mdChipsCtrl.selectedChip === -1) {
+                mdChipsCtrl.onFocus();
+              }
+            });
 
         if (attr.ngModel) {
           mdChipsCtrl.configureNgModel(element.controller('ngModel'));
@@ -380,6 +393,7 @@
           // If an `md-on-append` attribute was set, tell the controller to use the expression
           // when appending chips.
           //
+          // TODO: Remove this now that 1.0 is long since released
           // DEPRECATED: Will remove in official 1.0 release
           if (attrs.mdOnAppend) mdChipsCtrl.useOnAppendExpression();
 

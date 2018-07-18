@@ -13,11 +13,14 @@ angular
  * returns  a list of possible contacts. The user can select one of these and add it to the list of
  * chips.
  *
- * You may also use the `md-highlight-text` directive along with its parameters to control the
- * appearance of the matched text inside of the contacts' autocomplete popup.
+ * You may also use the <a ng-href="api/directive/mdHighlightText">md-highlight-flags</a> attribute
+ * along with its parameters to control the appearance of the matched text inside of the contacts'
+ * autocomplete popup.
  *
- * @param {string=|object=} ng-model A model to bind the list of items to
- * @param {expression=} ng-change AngularJS expression to be executed on chip addition/removal
+ * @param {expression} ng-model Assignable AngularJS expression to be data-bound to the list of
+ *    contact chips. The expression should evaluate to an `Object` Array.
+ * @param {expression=} ng-change AngularJS expression to be executed on chip addition, removal,
+ *    or content change.
  * @param {string=} placeholder Placeholder text that will be forwarded to the input.
  * @param {string=} secondary-placeholder Placeholder text that will be forwarded to the input,
  *    displayed when there is at least on item in the list
@@ -32,12 +35,6 @@ angular
  *    contact's image.
  * @param {number=} md-min-length Specifies the minimum length of text before autocomplete will
  *    make suggestions
- *
- * @param {expression=} filter-selected Whether to filter selected contacts from the list of
- *    suggestions shown in the autocomplete.
- *
- *    ***Note:** This attribute has been removed but may come back.*
- *
  *
  *
  * @usage
@@ -60,7 +57,8 @@ var MD_CONTACT_CHIPS_TEMPLATE = '\
           ng-model="$mdContactChipsCtrl.contacts"\
           ng-change="$mdContactChipsCtrl.ngChange($mdContactChipsCtrl.contacts)"\
           md-require-match="$mdContactChipsCtrl.requireMatch"\
-          md-chip-append-delay="{{$mdContactChipsCtrl.chipAppendDelay}}" \
+          md-chip-append-delay="{{$mdContactChipsCtrl.chipAppendDelay}}"\
+          md-separator-keys="$mdContactChipsCtrl.separatorKeys"\
           md-autocomplete-snap>\
           <md-autocomplete\
               md-menu-class="md-contact-chips-suggestions"\
@@ -71,6 +69,7 @@ var MD_CONTACT_CHIPS_TEMPLATE = '\
               md-no-cache="true"\
               md-min-length="$mdContactChipsCtrl.minLength"\
               md-autoselect\
+              ng-keydown="$mdContactChipsCtrl.inputKeydown($event)"\
               placeholder="{{$mdContactChipsCtrl.contacts.length == 0 ?\
                   $mdContactChipsCtrl.placeholder : $mdContactChipsCtrl.secondaryPlaceholder}}">\
             <div class="md-contact-suggestion">\
@@ -128,7 +127,8 @@ function MdContactChips($mdTheming, $mdUtil) {
       requireMatch: '=?mdRequireMatch',
       minLength: '=?mdMinLength',
       highlightFlags: '@?mdHighlightFlags',
-      chipAppendDelay: '@?mdChipAppendDelay'
+      chipAppendDelay: '@?mdChipAppendDelay',
+      separatorKeys: '=?mdSeparatorKeys',
     }
   };
 
