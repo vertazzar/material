@@ -1164,7 +1164,7 @@ MdPanelService.prototype.create = function(preset, config) {
   }, this._defaultConfigOptions, config, preset);
 
   // Create the panelRef and add it to the `_trackedPanels` object.
-  var panelRef = new MdPanelRef(this._config, this._$injector);
+  var panelRef = new MdPanelRef(this._config, this._$injector, this);
   this._trackedPanels[config.id] = panelRef;
 
   // Add the panel to each of its requested groups.
@@ -1354,10 +1354,11 @@ MdPanelService.prototype._wrapContentElement = function(contentElement) {
  * @param {!angular.$injector} $injector
  * @final @constructor
  */
-function MdPanelRef(config, $injector) {
+function MdPanelRef(config, $injector, parent) {
   // Injected variables.
   /** @private @const {!angular.$q} */
   this._$q = $injector.get('$q');
+  this._parent = parent;
 
   /** @private @const {!angular.$mdCompiler} */
   this._$mdCompiler = $injector.get('$mdCompiler');
@@ -1614,6 +1615,8 @@ MdPanelRef.prototype.destroy = function() {
       self.removeFromGroup(group);
     });
   }
+  delete this._parent._trackedPanels[config.id];
+  this._parent = null;
   this.config.scope.$destroy();
   this.config.locals = null;
   this.config.onDomAdded = null;
