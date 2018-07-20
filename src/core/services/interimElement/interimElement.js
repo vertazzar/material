@@ -323,6 +323,15 @@ function InterimElementProvider() {
 
                 if (interimElement.options.scope !== undefined && interimElement.options.isolateScope) {
                     interimElement.options.scope.$interimElement = interimElement;
+                    interimElement.options.scope.$on('$destroy', function () {
+                        setTimeout(function () {
+                            interimElement.options.scope.$interimElement = null;
+                            interimElement.options.scope._close = null;
+                            interimElement.options.scope.close = null;
+                        }, 100);
+                    });
+
+
                     interimElement.options.scope._close = closex;
                     interimElement.options.scope.close = closex;
                 }
