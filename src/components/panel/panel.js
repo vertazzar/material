@@ -1615,7 +1615,7 @@ MdPanelRef.prototype.destroy = function() {
       self.removeFromGroup(group);
     });
   }
-  delete this._parent._trackedPanels[config.id];
+  delete this._parent._trackedPanels[this.config.id];
   this._parent = null;
   this.config.scope.$destroy();
   this.config.locals = null;
