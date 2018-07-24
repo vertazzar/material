@@ -1522,65 +1522,6 @@ md-autocomplete {
   }
 }
 
-// !!Important - Theme-based Background-color can be configured in backdrop-theme.scss
-//             - Animate background-color opacity only for `.md-opaque` styles
-
-md-backdrop {
-  transition: opacity 450ms;
-
-  position: absolute;
-  top:0;
-  bottom:0;
-  left: 0;
-  right: 0;
-
-  z-index: $z-index-backdrop;
-
-  &.md-menu-backdrop {
-    position: fixed !important;
-    z-index: $z-index-menu - 1;
-  }
-  &.md-select-backdrop {
-    z-index: $z-index-dialog + 1;
-    transition-duration: 0;
-  }
-  &.md-dialog-backdrop {
-    z-index: $z-index-dialog - 1;
-  }
-  &.md-bottom-sheet-backdrop {
-    z-index: $z-index-bottom-sheet - 1;
-  }
-  &.md-sidenav-backdrop {
-    z-index: $z-index-sidenav - 1;
-  }
-
-
-  &.md-click-catcher {
-    position: absolute;
-  }
-
-  &.md-opaque {
-
-    opacity: .48;
-
-    &.ng-enter {
-      opacity: 0;
-    }
-    &.ng-enter.md-opaque.ng-enter-active {
-      opacity: .48;
-    }
-    &.ng-leave {
-      opacity: .48;
-      transition: opacity 400ms;
-    }
-    &.ng-leave.md-opaque.ng-leave-active {
-      opacity: 0;
-    }
-  }
-
-}
-
-
 $bottom-sheet-horizontal-padding: 2 * $baseline-grid !default;
 $bottom-sheet-vertical-padding: 1 * $baseline-grid !default;
 $bottom-sheet-icon-after-margin: 4 * $baseline-grid !default;
@@ -2008,6 +1949,65 @@ button.md-button.md-fab {
   }
 }
 
+// !!Important - Theme-based Background-color can be configured in backdrop-theme.scss
+//             - Animate background-color opacity only for `.md-opaque` styles
+
+md-backdrop {
+  transition: opacity 450ms;
+
+  position: absolute;
+  top:0;
+  bottom:0;
+  left: 0;
+  right: 0;
+
+  z-index: $z-index-backdrop;
+
+  &.md-menu-backdrop {
+    position: fixed !important;
+    z-index: $z-index-menu - 1;
+  }
+  &.md-select-backdrop {
+    z-index: $z-index-dialog + 1;
+    transition-duration: 0;
+  }
+  &.md-dialog-backdrop {
+    z-index: $z-index-dialog - 1;
+  }
+  &.md-bottom-sheet-backdrop {
+    z-index: $z-index-bottom-sheet - 1;
+  }
+  &.md-sidenav-backdrop {
+    z-index: $z-index-sidenav - 1;
+  }
+
+
+  &.md-click-catcher {
+    position: absolute;
+  }
+
+  &.md-opaque {
+
+    opacity: .48;
+
+    &.ng-enter {
+      opacity: 0;
+    }
+    &.ng-enter.md-opaque.ng-enter-active {
+      opacity: .48;
+    }
+    &.ng-leave {
+      opacity: .48;
+      transition: opacity 400ms;
+    }
+    &.ng-leave.md-opaque.ng-leave-active {
+      opacity: 0;
+    }
+  }
+
+}
+
+
 $card-padding: 16px !default;
 $card-box-shadow: $whiteframe-shadow-1dp !default;
 
@@ -2306,6 +2306,179 @@ md-checkbox {
   }
 }
 
+md-content {
+
+  display: block;
+  position: relative;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+
+  &[md-scroll-y] {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  &[md-scroll-x] {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  &[md-scroll-xy] {
+  }
+
+  @media print {
+    overflow: visible !important;
+  }
+}
+
+
+
+$dialog-padding: $baseline-grid * 3 !default;
+
+.md-dialog-is-showing {
+  max-height: 100%;
+}
+
+.md-dialog-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: $z-index-dialog;
+  overflow: hidden;
+}
+
+md-dialog {
+
+  &.md-transition-in {
+    opacity: 1;
+    transition: $swift-ease-out;
+    transform: translate(0,0) scale(1.0);
+  }
+  &.md-transition-out {
+    opacity: 0;
+    transition: $swift-ease-out;
+    transform: translate(0,100%) scale(0.2);
+  }
+
+  opacity: 0;
+  min-width: 240px;
+  max-width: 80%;
+  max-height: 80%;
+  position: relative;
+  overflow: auto; // stop content from leaking out of dialog parent and fix IE
+
+  box-shadow: $whiteframe-shadow-13dp;
+
+  display: flex;
+  flex-direction: column;
+
+  &> form {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+  }
+
+  .md-dialog-content {
+    padding: $dialog-padding;
+  }
+
+  md-dialog-content {
+    order: 1;
+    flex-direction: column;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+
+    &:not([layout=row]) > *:first-child:not(.md-subheader) {
+      margin-top: 0;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    .md-subheader {
+      margin: 0;
+    }
+
+    .md-dialog-content-body {
+      width:100%;
+    }
+
+    .md-prompt-input-container {
+      width: 100%;
+      box-sizing: border-box;
+    }
+  }
+
+  .md-actions, md-dialog-actions {
+    display: flex;
+    order: 2;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 0;
+    @include rtl(padding-right, $baseline-grid, $baseline-grid * 2);
+    @include rtl(padding-left, $baseline-grid * 2, $baseline-grid);
+    min-height: $baseline-grid * 6.5;
+    overflow: hidden;
+
+    .md-button {
+      margin-bottom: $baseline-grid;
+      @include rtl(margin-left, $baseline-grid, 0);
+      @include rtl(margin-right, 0, $baseline-grid);
+      margin-top: $baseline-grid;
+    }
+  }
+  &.md-content-overflow {
+    .md-actions, md-dialog-actions {
+      border-top-width: 1px;
+      border-top-style: solid;
+    }
+  }
+
+}
+
+@media screen and (-ms-high-contrast: active) {
+  md-dialog {
+    border: 1px solid #fff;
+  }
+}
+
+@media (max-width: $layout-breakpoint-sm - 1) {
+  md-dialog.md-dialog-fullscreen {
+    min-height: 100%;
+    min-width: 100%;
+    border-radius: 0;
+  }
+}
+
+md-divider {
+  display: block;
+  border-top-width: 1px;
+  border-top-style: solid;
+  margin: 0;
+
+  &[md-inset] {
+    @include rtl-prop(margin-left, margin-right, $baseline-grid * 10, auto);
+  }
+}
+
+.layout-row,
+.layout-xs-row, .layout-gt-xs-row,
+.layout-sm-row, .layout-gt-sm-row,
+.layout-md-row, .layout-gt-md-row,
+.layout-lg-row, .layout-gt-lg-row,
+.layout-xl-row {
+  & > md-divider {
+    border-top-width: 0;
+    border-right-width: 1px;
+    border-right-style: solid;
+  }
+}
+
 $chip-font-size: rem(1.6) !default;
 $chip-height: rem(3.2) !default;
 $chip-padding: 0 rem(1.2) 0 rem(1.2) !default;
@@ -2517,176 +2690,566 @@ $contact-chip-name-width: rem(12) !default;
 }
 
 
-md-content {
+/** Styles for mdCalendar. */
+$md-calendar-cell-size: 44px !default;
+$md-calendar-header-height: 40px !default;
+$md-calendar-cell-emphasis-size: 40px !default;
+$md-calendar-side-padding: 16px !default;
+$md-calendar-weeks-to-show: 7 !default;
 
-  display: block;
-  position: relative;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
+$md-calendar-month-label-padding: 8px !default;
+$md-calendar-month-label-font-size: 14px !default;
 
-  &[md-scroll-y] {
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
-  &[md-scroll-x] {
-    overflow-x: auto;
-    overflow-y: hidden;
-  }
-  &[md-scroll-xy] {
+$md-calendar-scroll-cue-shadow-radius: 6px !default;
+
+$md-calendar-width: (7 * $md-calendar-cell-size) + (2 * $md-calendar-side-padding) !default;
+$md-calendar-height:
+    ($md-calendar-weeks-to-show * $md-calendar-cell-size) + $md-calendar-header-height !default;
+
+// Styles for date cells, including day-of-the-week header cells.
+@mixin md-calendar-cell($height: $md-calendar-cell-size) {
+  height: $height;
+  width: $md-calendar-cell-size;
+  text-align: center;
+
+  // Remove all padding and borders so we can completely
+  // control the size of the table cells.
+  padding: 0;
+  border: none;
+
+  // Prevent issues if somebody is applying box-sizing: border-box; eveywhere.
+  box-sizing: content-box;
+
+  // The left / right padding is applied to the cells instead of the wrapper
+  // because we want the header background and the month dividing border to
+  // extend the entire width of the calendar.
+  &:first-child {
+    @include rtl-prop(padding-left, padding-right, $md-calendar-side-padding, 0);
   }
 
-  @media print {
-    overflow: visible !important;
+  &:last-child {
+    @include rtl-prop(padding-right, padding-left, $md-calendar-side-padding, 0);
   }
 }
 
-
-
-$dialog-padding: $baseline-grid * 3 !default;
-
-.md-dialog-is-showing {
-  max-height: 100%;
+// Styles for tables used in mdCalendar (the day-of-the-week header and the table of dates itself).
+@mixin md-calendar-table() {
+  // Fixed table layout makes IE faster.
+  // https://msdn.microsoft.com/en-us/library/ms533020(VS.85).aspx
+  table-layout: fixed;
+  border-spacing: 0;
+  border-collapse: collapse;
 }
 
-.md-dialog-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: $z-index-dialog;
+md-calendar {
+  font-size: 13px;
+  user-select: none;
+}
+
+// Wrap the scroll with overflow: hidden in order to hide the scrollbar.
+// The inner .md-calendar-scroll-container will using a padding-right to push the
+// scrollbar into the hidden area (done with javascript).
+.md-calendar-scroll-mask {
+  display: inline-block;
   overflow: hidden;
-}
+  height: $md-calendar-weeks-to-show * $md-calendar-cell-size;
 
-md-dialog {
-
-  &.md-transition-in {
-    opacity: 1;
-    transition: $swift-ease-out;
-    transform: translate(0,0) scale(1.0);
-  }
-  &.md-transition-out {
-    opacity: 0;
-    transition: $swift-ease-out;
-    transform: translate(0,100%) scale(0.2);
-  }
-
-  opacity: 0;
-  min-width: 240px;
-  max-width: 80%;
-  max-height: 80%;
-  position: relative;
-  overflow: auto; // stop content from leaking out of dialog parent and fix IE
-
-  box-shadow: $whiteframe-shadow-13dp;
-
-  display: flex;
-  flex-direction: column;
-
-  &> form {
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-  }
-
-  .md-dialog-content {
-    padding: $dialog-padding;
-  }
-
-  md-dialog-content {
-    order: 1;
-    flex-direction: column;
-    overflow: auto;
+  // The actual scrolling element.
+  .md-virtual-repeat-scroller {
+    // These two properties are needed to get touch momentum to work.
+    // See https://css-tricks.com/snippets/css/momentum-scrolling-on-ios-overflow-elements
+    overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
 
-    &:not([layout=row]) > *:first-child:not(.md-subheader) {
-      margin-top: 0;
-    }
-
-    &:focus {
-      outline: none;
-    }
-
-    .md-subheader {
-      margin: 0;
-    }
-
-    .md-dialog-content-body {
-      width:100%;
-    }
-
-    .md-prompt-input-container {
-      width: 100%;
-      box-sizing: border-box;
+    &::-webkit-scrollbar {
+      display: none;
     }
   }
 
-  .md-actions, md-dialog-actions {
-    display: flex;
-    order: 2;
-    box-sizing: border-box;
-    align-items: center;
-    justify-content: flex-end;
-    margin-bottom: 0;
-    @include rtl(padding-right, $baseline-grid, $baseline-grid * 2);
-    @include rtl(padding-left, $baseline-grid * 2, $baseline-grid);
-    min-height: $baseline-grid * 6.5;
+  // Offsetter is the element that is translateY'ed into view of the user and contains the
+  // calendar content.
+  .md-virtual-repeat-offsetter {
+    width: 100%;
+  }
+}
+
+// Contains the scrolling element (this is the md-virtual-repeat-container).
+.md-calendar-scroll-container {
+  // Add an inset shadow to help cue users that the calendar is scrollable. Use a negative x
+  // offset to push the vertical edge shadow off to the right so that it's cut off by the edge
+  // of the calendar container.
+  box-shadow: inset -3px 3px $md-calendar-scroll-cue-shadow-radius rgba(black, 0.2);
+
+  display: inline-block;
+  height: $md-calendar-weeks-to-show * $md-calendar-cell-size;
+
+  // Add the shadow radius to the width so that the shadow os pushed off to the side and cut off.
+  width: $md-calendar-width + $md-calendar-scroll-cue-shadow-radius;
+}
+
+// A single date cell in the calendar table.
+.md-calendar-date {
+  @include md-calendar-cell();
+
+  &.md-calendar-date-disabled {
+    cursor: default;
+  }
+}
+
+// Circle element inside of every date cell used to indicate selection or focus.
+.md-calendar-date-selection-indicator {
+  transition: background-color, color $swift-ease-out-duration $swift-ease-out-timing-function;
+
+  border-radius: 50%;
+  display: inline-block;
+
+  width: $md-calendar-cell-emphasis-size;
+  height: $md-calendar-cell-emphasis-size;
+  line-height: $md-calendar-cell-emphasis-size;
+
+  .md-calendar-date:not(.md-disabled) & {
+    cursor: pointer;
+  }
+}
+
+// The label above each month (containing the month name and the year, e.g. "Jun 2014").
+.md-calendar-month-label {
+  height: $md-calendar-cell-size;
+  font-size: $md-calendar-month-label-font-size;
+  font-weight: 500; // Roboto Medium
+  @include rtl(padding, 0 0 0 $md-calendar-side-padding + $md-calendar-month-label-padding, rtl-value( 0 0 0 $md-calendar-side-padding + $md-calendar-month-label-padding));
+
+  &.md-calendar-label-clickable {
+    cursor: pointer;
+  }
+
+  md-icon {
+    @include rtl(transform, rotate(180deg), none);
+  }
+
+  span {
+    vertical-align: middle;
+  }
+}
+
+// Table containing the day-of-the-week header.
+.md-calendar-day-header {
+  @include md-calendar-table();
+
+  th {
+    @include md-calendar-cell($md-calendar-header-height);
+    font-weight: normal;
+  }
+}
+
+// Primary table containing all date cells. Each month is a tbody in this table.
+.md-calendar {
+  @include md-calendar-table();
+
+  // Divider between months.
+  tr:last-child td {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+  }
+
+  // The divider between months doesn't actually change the height of the tbody in which the
+  // border appear; it changes the height of the following tbody. The causes the first-child to be
+  // 1px shorter than the other months. We fix this by adding an invisible border-top.
+  &:first-child {
+    border-top: 1px solid transparent;
+  }
+
+  // Explicitly set vertical-align to avoid conflicting with popular CSS resets. When
+  // vertical-align:baseline is set, month headers are misaligned. Also reset the box-sizing,
+  // in case the user set it to border-box.
+  // http://meyerweb.com/eric/tools/css/reset/
+  tbody, td, tr {
+    vertical-align: middle;
+    box-sizing: content-box;
+  }
+}
+
+/** Styles for mdDatepicker. */
+$md-datepicker-button-gap: 12px !default;  // Space between the text input and the calendar-icon button.
+$md-datepicker-border-bottom-gap: 5px !default;  // Space between input and the grey underline.
+$md-date-arrow-size: 5px !default; // Size of the triangle on the right side of the input.
+$md-datepicker-open-animation-duration: 0.2s !default;
+$md-datepicker-triangle-button-width: 36px !default;
+$md-datepicker-input-mask-height: 40px !default;
+$md-datepicker-button-padding: 8px !default;
+
+
+md-datepicker {
+  // Don't let linebreaks happen between the open icon-button and the input.
+  white-space: nowrap;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.md-inline-form {
+  md-datepicker {
+    margin-top: 12px;
+  }
+}
+
+// The calendar icon button used to open the calendar pane.
+.md-datepicker-button {
+  display: inline-block;
+  box-sizing: border-box;
+  background: none;
+  vertical-align: middle;
+  position: relative;
+
+  // Captures any of the click events. This is necessary, because the button has a SVG
+  // icon which doesn't propagate the focus event, causing inconsistent behaviour.
+  &:before {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    content: '';
+    speak: none;
+  }
+}
+
+// The input into which the user can type the date.
+.md-datepicker-input {
+  @include md-flat-input();
+  min-width: 120px;
+  max-width: $md-calendar-width - $md-datepicker-button-gap;
+  padding: 0 0 $md-datepicker-border-bottom-gap;
+}
+
+// If the datepicker is inside of a md-input-container
+._md-datepicker-floating-label {
+  > md-datepicker {
+    // Prevents the ripple on the triangle from being clipped.
+    overflow: visible;
+
+    .md-datepicker-input-container {
+      border: none;
+    }
+
+    .md-datepicker-button {
+      // Prevents the button from wrapping around, as well as it pushing
+      // down the error messages more than they should be.
+      @include rtl(float, left, right);
+      margin-top: $button-left-right-padding * -2;
+      top: $button-left-right-padding * 2 - $md-datepicker-border-bottom-gap / 2;
+    }
+  }
+
+  .md-input {
+    float: none;
+  }
+
+  &._md-datepicker-has-calendar-icon {
+    > label:not(.md-no-float):not(.md-container-ignore) {
+      $width-offset: $md-datepicker-triangle-button-width * 2 + $md-datepicker-button-gap;
+      $offset: $md-datepicker-triangle-button-width / 2;
+      @include rtl(right, $offset, auto);
+      @include rtl(left, auto, $offset);
+      width: calc(100% - #{$width-offset});
+    }
+
+    .md-input-message-animation {
+      $margin: $md-datepicker-triangle-button-width + $md-datepicker-button-padding * 2 + $md-datepicker-button-gap;
+      @include rtl-prop(margin-left, margin-right, $margin, auto);
+    }
+  }
+}
+
+._md-datepicker-has-triangle-icon {
+  // Leave room for the down-triangle button to "overflow" it's parent without modifying scrollLeft.
+  // This prevents the element from shifting right when opening via the triangle button.
+  @include rtl-prop(padding-right, padding-left, $md-datepicker-triangle-button-width / 2, 0);
+  @include rtl-prop(margin-right, margin-left, -$md-datepicker-triangle-button-width / 2, auto);
+}
+
+// Container for the datepicker input.
+.md-datepicker-input-container {
+  // Position relative in order to absolutely position the down-triangle button within.
+  position: relative;
+
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+
+  display: inline-block;
+  width: auto;
+
+  .md-icon-button + & {
+    @include rtl-prop(margin-left, margin-right, $md-datepicker-button-gap, auto);
+  }
+
+  &.md-datepicker-focused {
+    border-bottom-width: 2px;
+  }
+}
+
+.md-datepicker-is-showing .md-scroll-mask {
+  z-index: $z-index-calendar-pane - 1;
+}
+
+// Floating pane that contains the calendar at the bottom of the input.
+.md-datepicker-calendar-pane {
+  // On most browsers the `scale(0)` below prevents this element from
+  // overflowing it's parent, however IE and Edge seem to disregard it.
+  // The `left: -100%` pulls the element back in order to ensure that
+  // it doesn't cause an overflow.
+  position: absolute;
+  top: 0;
+  left: -100%;
+  z-index: $z-index-calendar-pane;
+  border-width: 1px;
+  border-style: solid;
+  background: transparent;
+
+  transform: scale(0);
+  transform-origin: 0 0;
+  transition: transform $md-datepicker-open-animation-duration $swift-ease-out-timing-function;
+
+  &.md-pane-open {
+    transform: scale(1);
+  }
+}
+
+// Portion of the floating panel that sits, invisibly, on top of the input.
+.md-datepicker-input-mask {
+  height: $md-datepicker-input-mask-height;
+  width: $md-calendar-width;
+  position: relative;
+  overflow: hidden;
+
+  background: transparent;
+  pointer-events: none;
+  cursor: text;
+}
+
+// The calendar portion of the floating pane (vs. the input mask).
+.md-datepicker-calendar {
+  opacity: 0;
+  // Use a modified timing function (from swift-ease-out) so that the opacity part of the
+  // animation doesn't come in as quickly so that the floating pane doesn't ever seem to
+  // cover up the trigger input.
+  transition: opacity $md-datepicker-open-animation-duration cubic-bezier(0.5, 0, 0.25, 1);
+
+  .md-pane-open & {
+    opacity: 1;
+  }
+
+  md-calendar:focus {
+    outline: none;
+  }
+}
+
+// Down triangle/arrow indicating that the datepicker can be opened.
+// We can do this entirely with CSS without needing to load an icon.
+// See https://css-tricks.com/snippets/css/css-triangle/
+.md-datepicker-expand-triangle {
+  // Center the triangle inside of the button so that the
+  // ink ripple origin looks correct.
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 0;
+  height: 0;
+  border-left: $md-date-arrow-size solid transparent;
+  border-right: $md-date-arrow-size solid transparent;
+  border-top: $md-date-arrow-size solid;
+}
+
+// Button containing the down "disclosure" triangle/arrow.
+.md-datepicker-triangle-button {
+  position: absolute;
+  @include rtl-prop(right, left, 0, auto);
+  bottom: -$md-date-arrow-size / 2;
+
+  // TODO(jelbourn): This position isn't great on all platforms.
+  @include rtl(transform, translateX(45%), translateX(-45%));
+}
+
+// Need crazy specificity to override .md-button.md-icon-button.
+// Only apply this high specificity to the property we need to override.
+.md-datepicker-triangle-button.md-button.md-icon-button {
+  height: $md-datepicker-triangle-button-width;
+  width: $md-datepicker-triangle-button-width;
+  position: absolute;
+  padding: $md-datepicker-button-padding;
+}
+
+// Disabled state for all elements of the picker.
+md-datepicker[disabled] {
+  .md-datepicker-input-container {
+    border-bottom-color: transparent;
+  }
+
+  .md-datepicker-triangle-button {
+    display: none;
+  }
+}
+
+// Open state for all of the elements of the picker.
+.md-datepicker-open {
+  overflow: hidden;
+
+  .md-datepicker-input-container,
+  input.md-input {
+    border-bottom-color: transparent;
+  }
+
+  .md-datepicker-triangle-button,
+  &.md-input-has-value > label,
+  &.md-input-has-placeholder > label {
+    display: none;
+  }
+}
+
+// When the position of the floating calendar pane is adjusted to remain inside
+// of the viewport, hide the inputput mask, as the text input will no longer be
+// directly underneath it.
+.md-datepicker-pos-adjusted .md-datepicker-input-mask {
+  display: none;
+}
+
+// Animate the calendar inside of the floating calendar pane such that it appears to "scroll" into
+// view while the pane is opening. This is done as a cue to users that the calendar is scrollable.
+.md-datepicker-calendar-pane {
+  .md-calendar {
+    transform: translateY(-85px);
+    transition: transform 0.65s $swift-ease-out-timing-function;
+    transition-delay: 0.125s;
+  }
+
+  &.md-pane-open .md-calendar {
+    transform: translateY(0);
+  }
+}
+
+$button-fab-width: rem(5.600) !default;
+$icon-button-margin: rem(0.600) !default;
+
+md-fab-toolbar {
+  $icon-delay: 200ms;
+
+  // Include the top/left/bottom/right fab positions
+  @include fab-all-positions();
+
+  display: block;
+
+  /*
+   * Closed styling
+   */
+  .md-fab-toolbar-wrapper {
+    display: block;
+    position: relative;
     overflow: hidden;
 
-    .md-button {
-      margin-bottom: $baseline-grid;
-      @include rtl(margin-left, $baseline-grid, 0);
-      @include rtl(margin-right, 0, $baseline-grid);
-      margin-top: $baseline-grid;
+    // Account for the size of the trigger plus its margin/shadow
+    height: $button-fab-width + ($icon-button-margin * 2);
+  }
+
+  md-fab-trigger {
+    position: absolute;
+    z-index: $z-index-fab;
+
+    button {
+      overflow: visible !important;
+    }
+
+    .md-fab-toolbar-background {
+      display: block;
+      position: absolute;
+      z-index: $z-index-fab + 1;
+
+      opacity: 1;
+      transition: $swift-ease-in;
+    }
+
+    md-icon {
+      position: relative;
+      z-index: $z-index-fab + 2;
+
+      opacity: 1;
+
+      // Hide the icon very quickly
+      transition: all $icon-delay ease-in;
     }
   }
-  &.md-content-overflow {
-    .md-actions, md-dialog-actions {
-      border-top-width: 1px;
-      border-top-style: solid;
+
+  &.md-left {
+    md-fab-trigger {
+      @include rtl-prop(right, left, 0, auto);
+    }
+
+    .md-toolbar-tools {
+      flex-direction: row-reverse;
+
+      > .md-button:first-child {
+        @include rtl-prop(margin-right, margin-left, 0.6rem, auto)
+      }
+
+      > .md-button:first-child {
+        @include rtl-prop(margin-left, margin-right, -0.8rem, auto);
+      }
+
+
+      > .md-button:last-child {
+        @include rtl-prop(margin-right, margin-left, 8px, auto);
+      }
+
     }
   }
 
-}
+  &.md-right {
+    md-fab-trigger {
+      @include rtl-prop(left, right, 0, auto);
+    }
 
-@media screen and (-ms-high-contrast: active) {
-  md-dialog {
-    border: 1px solid #fff;
+    .md-toolbar-tools {
+      flex-direction: row;
+    }
   }
-}
 
-@media (max-width: $layout-breakpoint-sm - 1) {
-  md-dialog.md-dialog-fullscreen {
-    min-height: 100%;
-    min-width: 100%;
-    border-radius: 0;
+  md-toolbar {
+    background-color: transparent !important;
+    pointer-events: none;
+    z-index: $z-index-fab + 3;
+
+    .md-toolbar-tools {
+      // Fix some spacing issues with the icons and the trigger
+      padding: 0 20px;
+      margin-top: 3px;
+    }
+
+    .md-fab-action-item {
+      opacity: 0;
+      transform: scale(0);
+      transition: $swift-ease-in;
+
+      // Cut the action item's animation time in half since we delay it in the JS
+      transition-duration: $swift-ease-in-duration / 2;
+    }
   }
-}
 
-md-divider {
-  display: block;
-  border-top-width: 1px;
-  border-top-style: solid;
-  margin: 0;
+  /*
+   * Hover styling
+   */
+  &.md-is-open {
+    md-fab-trigger > button {
+      box-shadow: none;
 
-  &[md-inset] {
-    @include rtl-prop(margin-left, margin-right, $baseline-grid * 10, auto);
-  }
-}
+      md-icon {
+        opacity: 0;
+      }
+    }
 
-.layout-row,
-.layout-xs-row, .layout-gt-xs-row,
-.layout-sm-row, .layout-gt-sm-row,
-.layout-md-row, .layout-gt-md-row,
-.layout-lg-row, .layout-gt-lg-row,
-.layout-xl-row {
-  & > md-divider {
-    border-top-width: 0;
-    border-right-width: 1px;
-    border-right-style: solid;
+    .md-fab-action-item {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 }
 
@@ -2835,131 +3398,6 @@ md-fab-speed-dial {
   }
 }
 
-$button-fab-width: rem(5.600) !default;
-$icon-button-margin: rem(0.600) !default;
-
-md-fab-toolbar {
-  $icon-delay: 200ms;
-
-  // Include the top/left/bottom/right fab positions
-  @include fab-all-positions();
-
-  display: block;
-
-  /*
-   * Closed styling
-   */
-  .md-fab-toolbar-wrapper {
-    display: block;
-    position: relative;
-    overflow: hidden;
-
-    // Account for the size of the trigger plus its margin/shadow
-    height: $button-fab-width + ($icon-button-margin * 2);
-  }
-
-  md-fab-trigger {
-    position: absolute;
-    z-index: $z-index-fab;
-
-    button {
-      overflow: visible !important;
-    }
-
-    .md-fab-toolbar-background {
-      display: block;
-      position: absolute;
-      z-index: $z-index-fab + 1;
-
-      opacity: 1;
-      transition: $swift-ease-in;
-    }
-
-    md-icon {
-      position: relative;
-      z-index: $z-index-fab + 2;
-
-      opacity: 1;
-
-      // Hide the icon very quickly
-      transition: all $icon-delay ease-in;
-    }
-  }
-
-  &.md-left {
-    md-fab-trigger {
-      @include rtl-prop(right, left, 0, auto);
-    }
-
-    .md-toolbar-tools {
-      flex-direction: row-reverse;
-
-      > .md-button:first-child {
-        @include rtl-prop(margin-right, margin-left, 0.6rem, auto)
-      }
-
-      > .md-button:first-child {
-        @include rtl-prop(margin-left, margin-right, -0.8rem, auto);
-      }
-
-
-      > .md-button:last-child {
-        @include rtl-prop(margin-right, margin-left, 8px, auto);
-      }
-
-    }
-  }
-
-  &.md-right {
-    md-fab-trigger {
-      @include rtl-prop(left, right, 0, auto);
-    }
-
-    .md-toolbar-tools {
-      flex-direction: row;
-    }
-  }
-
-  md-toolbar {
-    background-color: transparent !important;
-    pointer-events: none;
-    z-index: $z-index-fab + 3;
-
-    .md-toolbar-tools {
-      // Fix some spacing issues with the icons and the trigger
-      padding: 0 20px;
-      margin-top: 3px;
-    }
-
-    .md-fab-action-item {
-      opacity: 0;
-      transform: scale(0);
-      transition: $swift-ease-in;
-
-      // Cut the action item's animation time in half since we delay it in the JS
-      transition-duration: $swift-ease-in-duration / 2;
-    }
-  }
-
-  /*
-   * Hover styling
-   */
-  &.md-is-open {
-    md-fab-trigger > button {
-      box-shadow: none;
-
-      md-icon {
-        opacity: 0;
-      }
-    }
-
-    .md-fab-action-item {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-}
-
 md-grid-list {
   box-sizing: border-box;
   display: block;
@@ -3041,6 +3479,397 @@ md-grid-list {
   }
 }
 
+
+$input-container-padding: 2px !default;
+
+$input-label-default-offset: 24px !default;
+$input-label-default-scale: 1.0 !default;
+$input-label-float-offset: 6px !default;
+$input-label-float-scale: 0.75 !default;
+$input-label-float-width: $input-container-padding + 16px !default;
+
+$input-placeholder-offset: $input-label-default-offset !default;
+
+$input-border-width-default: 1px !default;
+$input-border-width-focused: 2px !default;
+$input-line-height: 26px !default;
+$input-padding-top: 2px !default;
+
+$input-error-font-size: 12px !default;
+$input-error-height: 24px !default;
+$input-error-line-height: $input-error-font-size + 2px !default;
+$error-padding-top: ($input-error-height - $input-error-line-height) / 2 !default;
+
+$icon-offset: 36px !default;
+
+$icon-top-offset: ($icon-offset - $input-padding-top - $input-border-width-focused) / 4 !default;
+
+$icon-float-focused-top: -8px !default;
+
+$input-resize-handle-height: 10px !default;
+
+md-input-container {
+  @include pie-clearfix();
+  display: inline-block;
+  position: relative;
+  padding: $input-container-padding;
+  margin: 18px 0;
+  vertical-align: middle;
+
+  &.md-block {
+    display: block;
+  }
+
+  // Setup a spacer that is always there as a placeholder for any messages so we don't change
+  // height with only 1 message
+  .md-errors-spacer {
+    @include rtl(float, right, left);
+    min-height: $input-error-height;
+
+    // Ensure the element always takes up space, even if empty
+    min-width: 1px;
+  }
+
+  > md-icon {
+    position: absolute;
+    top: $icon-top-offset;
+    @include rtl(left, 2px, auto);
+    @include rtl(right, auto, 2px);
+  }
+
+  textarea,
+  input[type="text"],
+  input[type="password"],
+  input[type="datetime"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="month"],
+  input[type="time"],
+  input[type="week"],
+  input[type="number"],
+  input[type="email"],
+  input[type="url"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="color"] {
+    /* remove default appearance from all input/textarea */
+    -moz-appearance: none;
+    -webkit-appearance: none;
+  }
+  input[type="date"],
+  input[type="datetime-local"],
+  input[type="month"],
+  input[type="time"],
+  input[type="week"] {
+    min-height: $input-line-height;
+  }
+  textarea {
+    resize: none;
+    overflow: hidden;
+
+    &.md-input {
+      min-height: $input-line-height;
+      -ms-flex-preferred-size: auto; //IE fix
+    }
+
+    // The height usually gets set to 1 line by `.md-input`.
+    &[md-no-autogrow] {
+      height: auto;
+      overflow: auto;
+    }
+  }
+
+  label:not(.md-container-ignore) {
+    position: absolute;
+    bottom: 100%;
+    @include rtl(left, 0, auto);
+    @include rtl(right, auto, 0);
+
+    &.md-required:after {
+      content: ' *';
+      font-size: 13px;
+      vertical-align: top;
+    }
+  }
+
+  label:not(.md-no-float):not(.md-container-ignore),
+  .md-placeholder {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    order: 1;
+    pointer-events: none;
+    -webkit-font-smoothing: antialiased;
+    @include rtl(padding-left, $input-container-padding + 1px, 0);
+    @include rtl(padding-right, 0, $input-container-padding + 1px);
+    z-index: 1;
+    transform: translate3d(0, $input-label-default-offset + 4, 0) scale($input-label-default-scale);
+    transition: transform $swift-ease-out-duration $swift-ease-out-timing-function;
+
+    // The max-width is necessary, because in some browsers, using this together with
+    // a calc might cause it to overflow the parent. See #7403
+    max-width: 100%;
+
+    @include rtl(transform-origin, left top, right top);
+  }
+  .md-placeholder {
+    position: absolute;
+    top: 0;
+    opacity: 0;
+    transition-property: opacity, transform;
+    transform: translate3d(0, $input-placeholder-offset + $baseline-grid * 0.75, 0);
+  }
+  &.md-input-focused .md-placeholder {
+    opacity: 1;
+    transform: translate3d(0, $input-placeholder-offset, 0);
+  }
+  // Placeholder should immediately disappear when the user starts typing
+  &.md-input-has-value .md-placeholder {
+    transition: none;
+    opacity: 0;
+  }
+
+  &:not( .md-input-has-value ) input:not( :focus ),
+  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-ampm-field,
+  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-day-field,
+  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-hour-field,
+  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-millisecond-field,
+  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-minute-field,
+  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-month-field,
+  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-second-field,
+  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-week-field,
+  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-year-field,
+  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-text {
+    color: transparent;
+  }
+
+  /*
+   * The .md-input class is added to the input/textarea
+   */
+  .md-input {
+    order: 2;
+    display: block;
+    margin-top: 0;
+
+    background: none;
+    padding-top: $input-padding-top;
+    padding-bottom: $input-border-width-focused - $input-border-width-default;
+    padding-left: 2px;
+    padding-right: 2px;
+    border-width: 0 0 $input-border-width-default 0;
+    line-height: $input-line-height;
+    height: $input-line-height + ($input-padding-top * 2);
+    -ms-flex-preferred-size: $input-line-height; //IE fix
+    border-radius: 0;
+    border-style: solid; // Firefox fix
+
+    // Fix number inputs in Firefox to be full-width
+    width: 100%;
+    box-sizing: border-box;
+
+    // Hacky fix to force vertical alignment between `input` and `textarea`
+    // Input and textarea do not align by default:
+    // http://jsbin.com/buqomevage/1/edit?html,css,js,output
+    @include rtl(float, left, right);
+
+    &:focus {
+      outline: none;
+    }
+    &:invalid {
+      outline: none;
+      box-shadow: none;
+    }
+
+    &.md-no-flex {
+      flex: none !important;
+    }
+  }
+
+  .md-char-counter {
+    @include rtl(text-align, right, left);
+    @include rtl(padding-right, $input-container-padding, 0);
+    @include rtl(padding-left, 0, $input-container-padding);
+  }
+
+  //
+  // ngMessage base styles - animations moved to input.js
+  //
+  .md-input-messages-animation {
+    position: relative;
+    order: 4;
+    overflow: hidden;
+    @include rtl(clear, left, right);
+
+  }
+
+  .md-input-message-animation, .md-char-counter {
+    font-size: $input-error-font-size;
+    line-height: $input-error-line-height;
+    overflow: hidden;
+
+    transition: $swift-ease-in;
+
+    // Default state for messages is to be visible
+    opacity: 1;
+    margin-top: 0;
+
+    // Add some top padding which is equal to half the difference between the expected height
+    // and the actual height
+    padding-top: $error-padding-top;
+
+    &:not(.md-char-counter) {
+      // Add some padding so that the messages don't touch the character counter
+      @include rtl(padding-right, rem(0.5), 0);
+      @include rtl(padding-left, 0, rem(0.5));
+    }
+  }
+
+  &:not(.md-input-invalid) {
+    .md-auto-hide {
+      .md-input-message-animation {
+        opacity: 0;
+        margin-top: -100px;
+      }
+    }
+  }
+
+  .md-input-message-animation {
+    // Enter animation
+    // Pre-animation state is transparent and off target
+    &.ng-enter-prepare {
+      opacity: 0;
+      margin-top: -100px;
+    }
+
+    // First keyframe of entry animation
+    &.ng-enter:not(.ng-enter-active) {
+      opacity: 0;
+      margin-top: -100px;
+    }
+  }
+
+  &.md-input-focused,
+  &.md-input-has-placeholder,
+  &.md-input-has-value {
+    label:not(.md-no-float) {
+      transform: translate3d(0, $input-label-float-offset, 0) scale($input-label-float-scale);
+      transition: transform $swift-ease-out-timing-function $swift-ease-out-duration,
+                  width $swift-ease-out-timing-function $swift-ease-out-duration;
+    }
+  }
+
+  // If we have an existing value; don't animate the transform as it happens on page load and
+  // causes erratic/unnecessary animation
+  &.md-input-has-value {
+    label {
+      transition: none;
+    }
+  }
+
+  // Use wide border in error state or in focused state
+  &.md-input-focused .md-input,
+  .md-input.ng-invalid.ng-dirty,
+  &.md-input-resized .md-input {
+    padding-bottom: 0; // Increase border width by 1px, decrease padding by 1
+    border-width: 0 0 $input-border-width-focused 0;
+  }
+
+  .md-input {
+    &[disabled],
+    [disabled] & {
+      // The negative border width offsets the dotted "border" so
+      // it's placed in the same place as the solid one before it.
+      background-position: bottom $input-border-width-default * -1 left 0;
+      // This background-size is coordinated with a linear-gradient set in input-theme.scss
+      // to create a dotted line under the input.
+      background-size: 4px 1px;
+      background-repeat: repeat-x;
+    }
+  }
+
+  &.md-icon-float {
+
+    transition: margin-top $swift-ease-out-duration $swift-ease-out-timing-function;
+
+    > label {
+      pointer-events: none;
+      position: absolute;
+    }
+
+    > md-icon {
+      top: $icon-top-offset;
+      @include rtl(left, 2px, auto);
+      @include rtl(right, auto, 2px);
+    }
+
+  }
+
+  &.md-icon-left,
+  &.md-icon-right {
+    > label {
+      &:not(.md-no-float):not(.md-container-ignore),
+      .md-placeholder {
+        width: calc(100% - #{$icon-offset} - #{$input-label-float-width});
+      }
+    }
+  }
+
+  // icon offset should have higher priority as normal label
+  &.md-icon-left {
+    @include rtl(padding-left, $icon-offset, 0);
+    @include rtl(padding-right, 0, $icon-offset);
+    > label {
+      @include rtl(left, $icon-offset, auto);
+      @include rtl(right, auto, $icon-offset);
+    }
+  }
+
+  &.md-icon-right {
+    @include rtl(padding-left, 0, $icon-offset);
+    @include rtl(padding-right, $icon-offset, 0);
+
+    > md-icon:last-of-type {
+      margin: 0;
+
+      @include rtl(right, 2px, auto);
+      @include rtl(left, auto, 2px);
+    }
+  }
+
+  &.md-icon-left.md-icon-right {
+    padding-left: $icon-offset;
+    padding-right: $icon-offset;
+
+    > label {
+      &:not(.md-no-float):not(.md-container-ignore),
+      .md-placeholder {
+        width: calc(100% - (#{$icon-offset} * 2));
+      }
+    }
+  }
+}
+
+.md-resize-wrapper {
+  @include pie-clearfix();
+  position: relative;
+}
+
+.md-resize-handle {
+  position: absolute;
+  bottom: $input-resize-handle-height / -2;
+  left: 0;
+  height: $input-resize-handle-height;
+  background: transparent;
+  width: 100%;
+  cursor: ns-resize;
+}
+
+@media screen and (-ms-high-contrast: active) {
+  md-input-container.md-default-theme > md-icon {
+    fill: #fff;
+  }
+}
 
 md-icon {
   margin: auto;
@@ -3522,395 +4351,80 @@ md-list-item {
   }
 }
 
-$input-container-padding: 2px !default;
+/** Matches "md-tabs md-tabs-wrapper" style. */
+$md-nav-bar-height: 48px;
 
-$input-label-default-offset: 24px !default;
-$input-label-default-scale: 1.0 !default;
-$input-label-float-offset: 6px !default;
-$input-label-float-scale: 0.75 !default;
-$input-label-float-width: $input-container-padding + 16px !default;
-
-$input-placeholder-offset: $input-label-default-offset !default;
-
-$input-border-width-default: 1px !default;
-$input-border-width-focused: 2px !default;
-$input-line-height: 26px !default;
-$input-padding-top: 2px !default;
-
-$input-error-font-size: 12px !default;
-$input-error-height: 24px !default;
-$input-error-line-height: $input-error-font-size + 2px !default;
-$error-padding-top: ($input-error-height - $input-error-line-height) / 2 !default;
-
-$icon-offset: 36px !default;
-
-$icon-top-offset: ($icon-offset - $input-padding-top - $input-border-width-focused) / 4 !default;
-
-$icon-float-focused-top: -8px !default;
-
-$input-resize-handle-height: 10px !default;
-
-md-input-container {
-  @include pie-clearfix();
-  display: inline-block;
-  position: relative;
-  padding: $input-container-padding;
-  margin: 18px 0;
-  vertical-align: middle;
-
-  &.md-block {
-    display: block;
-  }
-
-  // Setup a spacer that is always there as a placeholder for any messages so we don't change
-  // height with only 1 message
-  .md-errors-spacer {
-    @include rtl(float, right, left);
-    min-height: $input-error-height;
-
-    // Ensure the element always takes up space, even if empty
-    min-width: 1px;
-  }
-
-  > md-icon {
-    position: absolute;
-    top: $icon-top-offset;
-    @include rtl(left, 2px, auto);
-    @include rtl(right, auto, 2px);
-  }
-
-  textarea,
-  input[type="text"],
-  input[type="password"],
-  input[type="datetime"],
-  input[type="datetime-local"],
-  input[type="date"],
-  input[type="month"],
-  input[type="time"],
-  input[type="week"],
-  input[type="number"],
-  input[type="email"],
-  input[type="url"],
-  input[type="search"],
-  input[type="tel"],
-  input[type="color"] {
-    /* remove default appearance from all input/textarea */
-    -moz-appearance: none;
-    -webkit-appearance: none;
-  }
-  input[type="date"],
-  input[type="datetime-local"],
-  input[type="month"],
-  input[type="time"],
-  input[type="week"] {
-    min-height: $input-line-height;
-  }
-  textarea {
-    resize: none;
-    overflow: hidden;
-
-    &.md-input {
-      min-height: $input-line-height;
-      -ms-flex-preferred-size: auto; //IE fix
-    }
-
-    // The height usually gets set to 1 line by `.md-input`.
-    &[md-no-autogrow] {
-      height: auto;
-      overflow: auto;
-    }
-  }
-
-  label:not(.md-container-ignore) {
-    position: absolute;
-    bottom: 100%;
-    @include rtl(left, 0, auto);
-    @include rtl(right, auto, 0);
-
-    &.md-required:after {
-      content: ' *';
-      font-size: 13px;
-      vertical-align: top;
-    }
-  }
-
-  label:not(.md-no-float):not(.md-container-ignore),
-  .md-placeholder {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 100%;
-    order: 1;
-    pointer-events: none;
-    -webkit-font-smoothing: antialiased;
-    @include rtl(padding-left, $input-container-padding + 1px, 0);
-    @include rtl(padding-right, 0, $input-container-padding + 1px);
-    z-index: 1;
-    transform: translate3d(0, $input-label-default-offset + 4, 0) scale($input-label-default-scale);
-    transition: transform $swift-ease-out-duration $swift-ease-out-timing-function;
-
-    // The max-width is necessary, because in some browsers, using this together with
-    // a calc might cause it to overflow the parent. See #7403
-    max-width: 100%;
-
-    @include rtl(transform-origin, left top, right top);
-  }
-  .md-placeholder {
-    position: absolute;
-    top: 0;
-    opacity: 0;
-    transition-property: opacity, transform;
-    transform: translate3d(0, $input-placeholder-offset + $baseline-grid * 0.75, 0);
-  }
-  &.md-input-focused .md-placeholder {
-    opacity: 1;
-    transform: translate3d(0, $input-placeholder-offset, 0);
-  }
-  // Placeholder should immediately disappear when the user starts typing
-  &.md-input-has-value .md-placeholder {
-    transition: none;
-    opacity: 0;
-  }
-
-  &:not( .md-input-has-value ) input:not( :focus ),
-  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-ampm-field,
-  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-day-field,
-  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-hour-field,
-  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-millisecond-field,
-  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-minute-field,
-  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-month-field,
-  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-second-field,
-  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-week-field,
-  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-year-field,
-  &:not( .md-input-has-value ) input:not( :focus )::-webkit-datetime-edit-text {
-    color: transparent;
-  }
-
-  /*
-   * The .md-input class is added to the input/textarea
-   */
-  .md-input {
-    order: 2;
-    display: block;
-    margin-top: 0;
-
-    background: none;
-    padding-top: $input-padding-top;
-    padding-bottom: $input-border-width-focused - $input-border-width-default;
-    padding-left: 2px;
-    padding-right: 2px;
-    border-width: 0 0 $input-border-width-default 0;
-    line-height: $input-line-height;
-    height: $input-line-height + ($input-padding-top * 2);
-    -ms-flex-preferred-size: $input-line-height; //IE fix
-    border-radius: 0;
-    border-style: solid; // Firefox fix
-
-    // Fix number inputs in Firefox to be full-width
-    width: 100%;
-    box-sizing: border-box;
-
-    // Hacky fix to force vertical alignment between `input` and `textarea`
-    // Input and textarea do not align by default:
-    // http://jsbin.com/buqomevage/1/edit?html,css,js,output
-    @include rtl(float, left, right);
-
-    &:focus {
-      outline: none;
-    }
-    &:invalid {
-      outline: none;
-      box-shadow: none;
-    }
-
-    &.md-no-flex {
-      flex: none !important;
-    }
-  }
-
-  .md-char-counter {
-    @include rtl(text-align, right, left);
-    @include rtl(padding-right, $input-container-padding, 0);
-    @include rtl(padding-left, 0, $input-container-padding);
-  }
-
-  //
-  // ngMessage base styles - animations moved to input.js
-  //
-  .md-input-messages-animation {
-    position: relative;
-    order: 4;
-    overflow: hidden;
-    @include rtl(clear, left, right);
-
-  }
-
-  .md-input-message-animation, .md-char-counter {
-    font-size: $input-error-font-size;
-    line-height: $input-error-line-height;
-    overflow: hidden;
-
-    transition: $swift-ease-in;
-
-    // Default state for messages is to be visible
-    opacity: 1;
-    margin-top: 0;
-
-    // Add some top padding which is equal to half the difference between the expected height
-    // and the actual height
-    padding-top: $error-padding-top;
-
-    &:not(.md-char-counter) {
-      // Add some padding so that the messages don't touch the character counter
-      @include rtl(padding-right, rem(0.5), 0);
-      @include rtl(padding-left, 0, rem(0.5));
-    }
-  }
-
-  &:not(.md-input-invalid) {
-    .md-auto-hide {
-      .md-input-message-animation {
-        opacity: 0;
-        margin-top: -100px;
-      }
-    }
-  }
-
-  .md-input-message-animation {
-    // Enter animation
-    // Pre-animation state is transparent and off target
-    &.ng-enter-prepare {
-      opacity: 0;
-      margin-top: -100px;
-    }
-
-    // First keyframe of entry animation
-    &.ng-enter:not(.ng-enter-active) {
-      opacity: 0;
-      margin-top: -100px;
-    }
-  }
-
-  &.md-input-focused,
-  &.md-input-has-placeholder,
-  &.md-input-has-value {
-    label:not(.md-no-float) {
-      transform: translate3d(0, $input-label-float-offset, 0) scale($input-label-float-scale);
-      transition: transform $swift-ease-out-timing-function $swift-ease-out-duration,
-                  width $swift-ease-out-timing-function $swift-ease-out-duration;
-    }
-  }
-
-  // If we have an existing value; don't animate the transform as it happens on page load and
-  // causes erratic/unnecessary animation
-  &.md-input-has-value {
-    label {
-      transition: none;
-    }
-  }
-
-  // Use wide border in error state or in focused state
-  &.md-input-focused .md-input,
-  .md-input.ng-invalid.ng-dirty,
-  &.md-input-resized .md-input {
-    padding-bottom: 0; // Increase border width by 1px, decrease padding by 1
-    border-width: 0 0 $input-border-width-focused 0;
-  }
-
-  .md-input {
-    &[disabled],
-    [disabled] & {
-      // The negative border width offsets the dotted "border" so
-      // it's placed in the same place as the solid one before it.
-      background-position: bottom $input-border-width-default * -1 left 0;
-      // This background-size is coordinated with a linear-gradient set in input-theme.scss
-      // to create a dotted line under the input.
-      background-size: 4px 1px;
-      background-repeat: repeat-x;
-    }
-  }
-
-  &.md-icon-float {
-
-    transition: margin-top $swift-ease-out-duration $swift-ease-out-timing-function;
-
-    > label {
-      pointer-events: none;
-      position: absolute;
-    }
-
-    > md-icon {
-      top: $icon-top-offset;
-      @include rtl(left, 2px, auto);
-      @include rtl(right, auto, 2px);
-    }
-
-  }
-
-  &.md-icon-left,
-  &.md-icon-right {
-    > label {
-      &:not(.md-no-float):not(.md-container-ignore),
-      .md-placeholder {
-        width: calc(100% - #{$icon-offset} - #{$input-label-float-width});
-      }
-    }
-  }
-
-  // icon offset should have higher priority as normal label
-  &.md-icon-left {
-    @include rtl(padding-left, $icon-offset, 0);
-    @include rtl(padding-right, 0, $icon-offset);
-    > label {
-      @include rtl(left, $icon-offset, auto);
-      @include rtl(right, auto, $icon-offset);
-    }
-  }
-
-  &.md-icon-right {
-    @include rtl(padding-left, 0, $icon-offset);
-    @include rtl(padding-right, $icon-offset, 0);
-
-    > md-icon:last-of-type {
-      margin: 0;
-
-      @include rtl(right, 2px, auto);
-      @include rtl(left, auto, 2px);
-    }
-  }
-
-  &.md-icon-left.md-icon-right {
-    padding-left: $icon-offset;
-    padding-right: $icon-offset;
-
-    > label {
-      &:not(.md-no-float):not(.md-container-ignore),
-      .md-placeholder {
-        width: calc(100% - (#{$icon-offset} * 2));
-      }
-    }
-  }
-}
-
-.md-resize-wrapper {
-  @include pie-clearfix();
+.md-nav-bar {
+  border-style: solid;
+  border-width: 0 0 1px;
+  height: $md-nav-bar-height;
   position: relative;
 }
 
-.md-resize-handle {
+._md-nav-bar-list {
+  outline: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  // Layout [layout='row']
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+}
+
+.md-nav-item:first-of-type {
+  margin-left: 8px;
+}
+
+// override button styles to look more like tabs
+.md-button._md-nav-button {
+  line-height: 24px;
+  margin: 0 4px;
+  padding: 12px 16px;
+  transition: background-color 0.35s $swift-ease-in-out-timing-function;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:hover {
+    background-color: inherit;
+  }
+
+}
+
+md-nav-ink-bar {
+  $duration: $swift-ease-in-out-duration * 0.5;
+  $multiplier: 0.5;
+  bottom: 0;
+  height: 2px;
+  left: auto;
   position: absolute;
-  bottom: $input-resize-handle-height / -2;
-  left: 0;
-  height: $input-resize-handle-height;
-  background: transparent;
-  width: 100%;
-  cursor: ns-resize;
+  right: auto;
+  background-color: black;
+
+  &._md-left {
+    transition: left ($duration * $multiplier) $swift-ease-in-out-timing-function,
+        right $duration $swift-ease-in-out-timing-function;
+  }
+  &._md-right {
+    transition: left $duration $swift-ease-in-out-timing-function,
+        right ($duration * $multiplier) $swift-ease-in-out-timing-function;
+  }
+
+  // By default $ngAnimate looks for transition durations on the element, when using ng-hide, ng-if, ng-show.
+  // The ink bar has a transition duration applied, which means, that $ngAnimate delays the hide process.
+  // To avoid this, we need to reset the transition, when $ngAnimate looks for the duration.
+  &.ng-animate {
+    transition: none;
+  }
+
 }
 
-@media screen and (-ms-high-contrast: active) {
-  md-input-container.md-default-theme > md-icon {
-    fill: #fff;
-  }
+md-nav-extra-content {
+  min-height: 48px;
+  padding-right: 12px;
 }
 
 $menu-border-radius: 2px !default;
@@ -4074,444 +4588,6 @@ md-toolbar {
 }
 
 
-/** Styles for mdCalendar. */
-$md-calendar-cell-size: 44px !default;
-$md-calendar-header-height: 40px !default;
-$md-calendar-cell-emphasis-size: 40px !default;
-$md-calendar-side-padding: 16px !default;
-$md-calendar-weeks-to-show: 7 !default;
-
-$md-calendar-month-label-padding: 8px !default;
-$md-calendar-month-label-font-size: 14px !default;
-
-$md-calendar-scroll-cue-shadow-radius: 6px !default;
-
-$md-calendar-width: (7 * $md-calendar-cell-size) + (2 * $md-calendar-side-padding) !default;
-$md-calendar-height:
-    ($md-calendar-weeks-to-show * $md-calendar-cell-size) + $md-calendar-header-height !default;
-
-// Styles for date cells, including day-of-the-week header cells.
-@mixin md-calendar-cell($height: $md-calendar-cell-size) {
-  height: $height;
-  width: $md-calendar-cell-size;
-  text-align: center;
-
-  // Remove all padding and borders so we can completely
-  // control the size of the table cells.
-  padding: 0;
-  border: none;
-
-  // Prevent issues if somebody is applying box-sizing: border-box; eveywhere.
-  box-sizing: content-box;
-
-  // The left / right padding is applied to the cells instead of the wrapper
-  // because we want the header background and the month dividing border to
-  // extend the entire width of the calendar.
-  &:first-child {
-    @include rtl-prop(padding-left, padding-right, $md-calendar-side-padding, 0);
-  }
-
-  &:last-child {
-    @include rtl-prop(padding-right, padding-left, $md-calendar-side-padding, 0);
-  }
-}
-
-// Styles for tables used in mdCalendar (the day-of-the-week header and the table of dates itself).
-@mixin md-calendar-table() {
-  // Fixed table layout makes IE faster.
-  // https://msdn.microsoft.com/en-us/library/ms533020(VS.85).aspx
-  table-layout: fixed;
-  border-spacing: 0;
-  border-collapse: collapse;
-}
-
-md-calendar {
-  font-size: 13px;
-  user-select: none;
-}
-
-// Wrap the scroll with overflow: hidden in order to hide the scrollbar.
-// The inner .md-calendar-scroll-container will using a padding-right to push the
-// scrollbar into the hidden area (done with javascript).
-.md-calendar-scroll-mask {
-  display: inline-block;
-  overflow: hidden;
-  height: $md-calendar-weeks-to-show * $md-calendar-cell-size;
-
-  // The actual scrolling element.
-  .md-virtual-repeat-scroller {
-    // These two properties are needed to get touch momentum to work.
-    // See https://css-tricks.com/snippets/css/momentum-scrolling-on-ios-overflow-elements
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  // Offsetter is the element that is translateY'ed into view of the user and contains the
-  // calendar content.
-  .md-virtual-repeat-offsetter {
-    width: 100%;
-  }
-}
-
-// Contains the scrolling element (this is the md-virtual-repeat-container).
-.md-calendar-scroll-container {
-  // Add an inset shadow to help cue users that the calendar is scrollable. Use a negative x
-  // offset to push the vertical edge shadow off to the right so that it's cut off by the edge
-  // of the calendar container.
-  box-shadow: inset -3px 3px $md-calendar-scroll-cue-shadow-radius rgba(black, 0.2);
-
-  display: inline-block;
-  height: $md-calendar-weeks-to-show * $md-calendar-cell-size;
-
-  // Add the shadow radius to the width so that the shadow os pushed off to the side and cut off.
-  width: $md-calendar-width + $md-calendar-scroll-cue-shadow-radius;
-}
-
-// A single date cell in the calendar table.
-.md-calendar-date {
-  @include md-calendar-cell();
-
-  &.md-calendar-date-disabled {
-    cursor: default;
-  }
-}
-
-// Circle element inside of every date cell used to indicate selection or focus.
-.md-calendar-date-selection-indicator {
-  transition: background-color, color $swift-ease-out-duration $swift-ease-out-timing-function;
-
-  border-radius: 50%;
-  display: inline-block;
-
-  width: $md-calendar-cell-emphasis-size;
-  height: $md-calendar-cell-emphasis-size;
-  line-height: $md-calendar-cell-emphasis-size;
-
-  .md-calendar-date:not(.md-disabled) & {
-    cursor: pointer;
-  }
-}
-
-// The label above each month (containing the month name and the year, e.g. "Jun 2014").
-.md-calendar-month-label {
-  height: $md-calendar-cell-size;
-  font-size: $md-calendar-month-label-font-size;
-  font-weight: 500; // Roboto Medium
-  @include rtl(padding, 0 0 0 $md-calendar-side-padding + $md-calendar-month-label-padding, rtl-value( 0 0 0 $md-calendar-side-padding + $md-calendar-month-label-padding));
-
-  &.md-calendar-label-clickable {
-    cursor: pointer;
-  }
-
-  md-icon {
-    @include rtl(transform, rotate(180deg), none);
-  }
-
-  span {
-    vertical-align: middle;
-  }
-}
-
-// Table containing the day-of-the-week header.
-.md-calendar-day-header {
-  @include md-calendar-table();
-
-  th {
-    @include md-calendar-cell($md-calendar-header-height);
-    font-weight: normal;
-  }
-}
-
-// Primary table containing all date cells. Each month is a tbody in this table.
-.md-calendar {
-  @include md-calendar-table();
-
-  // Divider between months.
-  tr:last-child td {
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-  }
-
-  // The divider between months doesn't actually change the height of the tbody in which the
-  // border appear; it changes the height of the following tbody. The causes the first-child to be
-  // 1px shorter than the other months. We fix this by adding an invisible border-top.
-  &:first-child {
-    border-top: 1px solid transparent;
-  }
-
-  // Explicitly set vertical-align to avoid conflicting with popular CSS resets. When
-  // vertical-align:baseline is set, month headers are misaligned. Also reset the box-sizing,
-  // in case the user set it to border-box.
-  // http://meyerweb.com/eric/tools/css/reset/
-  tbody, td, tr {
-    vertical-align: middle;
-    box-sizing: content-box;
-  }
-}
-
-/** Styles for mdDatepicker. */
-$md-datepicker-button-gap: 12px !default;  // Space between the text input and the calendar-icon button.
-$md-datepicker-border-bottom-gap: 5px !default;  // Space between input and the grey underline.
-$md-date-arrow-size: 5px !default; // Size of the triangle on the right side of the input.
-$md-datepicker-open-animation-duration: 0.2s !default;
-$md-datepicker-triangle-button-width: 36px !default;
-$md-datepicker-input-mask-height: 40px !default;
-$md-datepicker-button-padding: 8px !default;
-
-
-md-datepicker {
-  // Don't let linebreaks happen between the open icon-button and the input.
-  white-space: nowrap;
-  overflow: hidden;
-  vertical-align: middle;
-}
-
-.md-inline-form {
-  md-datepicker {
-    margin-top: 12px;
-  }
-}
-
-// The calendar icon button used to open the calendar pane.
-.md-datepicker-button {
-  display: inline-block;
-  box-sizing: border-box;
-  background: none;
-  vertical-align: middle;
-  position: relative;
-
-  // Captures any of the click events. This is necessary, because the button has a SVG
-  // icon which doesn't propagate the focus event, causing inconsistent behaviour.
-  &:before {
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    position: absolute;
-    content: '';
-    speak: none;
-  }
-}
-
-// The input into which the user can type the date.
-.md-datepicker-input {
-  @include md-flat-input();
-  min-width: 120px;
-  max-width: $md-calendar-width - $md-datepicker-button-gap;
-  padding: 0 0 $md-datepicker-border-bottom-gap;
-}
-
-// If the datepicker is inside of a md-input-container
-._md-datepicker-floating-label {
-  > md-datepicker {
-    // Prevents the ripple on the triangle from being clipped.
-    overflow: visible;
-
-    .md-datepicker-input-container {
-      border: none;
-    }
-
-    .md-datepicker-button {
-      // Prevents the button from wrapping around, as well as it pushing
-      // down the error messages more than they should be.
-      @include rtl(float, left, right);
-      margin-top: $button-left-right-padding * -2;
-      top: $button-left-right-padding * 2 - $md-datepicker-border-bottom-gap / 2;
-    }
-  }
-
-  .md-input {
-    float: none;
-  }
-
-  &._md-datepicker-has-calendar-icon {
-    > label:not(.md-no-float):not(.md-container-ignore) {
-      $width-offset: $md-datepicker-triangle-button-width * 2 + $md-datepicker-button-gap;
-      $offset: $md-datepicker-triangle-button-width / 2;
-      @include rtl(right, $offset, auto);
-      @include rtl(left, auto, $offset);
-      width: calc(100% - #{$width-offset});
-    }
-
-    .md-input-message-animation {
-      $margin: $md-datepicker-triangle-button-width + $md-datepicker-button-padding * 2 + $md-datepicker-button-gap;
-      @include rtl-prop(margin-left, margin-right, $margin, auto);
-    }
-  }
-}
-
-._md-datepicker-has-triangle-icon {
-  // Leave room for the down-triangle button to "overflow" it's parent without modifying scrollLeft.
-  // This prevents the element from shifting right when opening via the triangle button.
-  @include rtl-prop(padding-right, padding-left, $md-datepicker-triangle-button-width / 2, 0);
-  @include rtl-prop(margin-right, margin-left, -$md-datepicker-triangle-button-width / 2, auto);
-}
-
-// Container for the datepicker input.
-.md-datepicker-input-container {
-  // Position relative in order to absolutely position the down-triangle button within.
-  position: relative;
-
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-
-  display: inline-block;
-  width: auto;
-
-  .md-icon-button + & {
-    @include rtl-prop(margin-left, margin-right, $md-datepicker-button-gap, auto);
-  }
-
-  &.md-datepicker-focused {
-    border-bottom-width: 2px;
-  }
-}
-
-.md-datepicker-is-showing .md-scroll-mask {
-  z-index: $z-index-calendar-pane - 1;
-}
-
-// Floating pane that contains the calendar at the bottom of the input.
-.md-datepicker-calendar-pane {
-  // On most browsers the `scale(0)` below prevents this element from
-  // overflowing it's parent, however IE and Edge seem to disregard it.
-  // The `left: -100%` pulls the element back in order to ensure that
-  // it doesn't cause an overflow.
-  position: absolute;
-  top: 0;
-  left: -100%;
-  z-index: $z-index-calendar-pane;
-  border-width: 1px;
-  border-style: solid;
-  background: transparent;
-
-  transform: scale(0);
-  transform-origin: 0 0;
-  transition: transform $md-datepicker-open-animation-duration $swift-ease-out-timing-function;
-
-  &.md-pane-open {
-    transform: scale(1);
-  }
-}
-
-// Portion of the floating panel that sits, invisibly, on top of the input.
-.md-datepicker-input-mask {
-  height: $md-datepicker-input-mask-height;
-  width: $md-calendar-width;
-  position: relative;
-  overflow: hidden;
-
-  background: transparent;
-  pointer-events: none;
-  cursor: text;
-}
-
-// The calendar portion of the floating pane (vs. the input mask).
-.md-datepicker-calendar {
-  opacity: 0;
-  // Use a modified timing function (from swift-ease-out) so that the opacity part of the
-  // animation doesn't come in as quickly so that the floating pane doesn't ever seem to
-  // cover up the trigger input.
-  transition: opacity $md-datepicker-open-animation-duration cubic-bezier(0.5, 0, 0.25, 1);
-
-  .md-pane-open & {
-    opacity: 1;
-  }
-
-  md-calendar:focus {
-    outline: none;
-  }
-}
-
-// Down triangle/arrow indicating that the datepicker can be opened.
-// We can do this entirely with CSS without needing to load an icon.
-// See https://css-tricks.com/snippets/css/css-triangle/
-.md-datepicker-expand-triangle {
-  // Center the triangle inside of the button so that the
-  // ink ripple origin looks correct.
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  width: 0;
-  height: 0;
-  border-left: $md-date-arrow-size solid transparent;
-  border-right: $md-date-arrow-size solid transparent;
-  border-top: $md-date-arrow-size solid;
-}
-
-// Button containing the down "disclosure" triangle/arrow.
-.md-datepicker-triangle-button {
-  position: absolute;
-  @include rtl-prop(right, left, 0, auto);
-  bottom: -$md-date-arrow-size / 2;
-
-  // TODO(jelbourn): This position isn't great on all platforms.
-  @include rtl(transform, translateX(45%), translateX(-45%));
-}
-
-// Need crazy specificity to override .md-button.md-icon-button.
-// Only apply this high specificity to the property we need to override.
-.md-datepicker-triangle-button.md-button.md-icon-button {
-  height: $md-datepicker-triangle-button-width;
-  width: $md-datepicker-triangle-button-width;
-  position: absolute;
-  padding: $md-datepicker-button-padding;
-}
-
-// Disabled state for all elements of the picker.
-md-datepicker[disabled] {
-  .md-datepicker-input-container {
-    border-bottom-color: transparent;
-  }
-
-  .md-datepicker-triangle-button {
-    display: none;
-  }
-}
-
-// Open state for all of the elements of the picker.
-.md-datepicker-open {
-  overflow: hidden;
-
-  .md-datepicker-input-container,
-  input.md-input {
-    border-bottom-color: transparent;
-  }
-
-  .md-datepicker-triangle-button,
-  &.md-input-has-value > label,
-  &.md-input-has-placeholder > label {
-    display: none;
-  }
-}
-
-// When the position of the floating calendar pane is adjusted to remain inside
-// of the viewport, hide the inputput mask, as the text input will no longer be
-// directly underneath it.
-.md-datepicker-pos-adjusted .md-datepicker-input-mask {
-  display: none;
-}
-
-// Animate the calendar inside of the floating calendar pane such that it appears to "scroll" into
-// view while the pane is opening. This is done as a cue to users that the calendar is scrollable.
-.md-datepicker-calendar-pane {
-  .md-calendar {
-    transform: translateY(-85px);
-    transition: transform 0.65s $swift-ease-out-timing-function;
-    transition-delay: 0.125s;
-  }
-
-  &.md-pane-open .md-calendar {
-    transform: translateY(0);
-  }
-}
-
 md-toolbar {
   &.md-menu-toolbar {
     h2.md-toolbar-tools {
@@ -4610,82 +4686,6 @@ md-menu-content.md-menu-bar-menu.md-dense {
       }
     }
   }
-}
-
-/** Matches "md-tabs md-tabs-wrapper" style. */
-$md-nav-bar-height: 48px;
-
-.md-nav-bar {
-  border-style: solid;
-  border-width: 0 0 1px;
-  height: $md-nav-bar-height;
-  position: relative;
-}
-
-._md-nav-bar-list {
-  outline: none;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-
-  // Layout [layout='row']
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-}
-
-.md-nav-item:first-of-type {
-  margin-left: 8px;
-}
-
-// override button styles to look more like tabs
-.md-button._md-nav-button {
-  line-height: 24px;
-  margin: 0 4px;
-  padding: 12px 16px;
-  transition: background-color 0.35s $swift-ease-in-out-timing-function;
-
-  &:focus {
-    outline: none;
-  }
-
-  &:hover {
-    background-color: inherit;
-  }
-
-}
-
-md-nav-ink-bar {
-  $duration: $swift-ease-in-out-duration * 0.5;
-  $multiplier: 0.5;
-  bottom: 0;
-  height: 2px;
-  left: auto;
-  position: absolute;
-  right: auto;
-  background-color: black;
-
-  &._md-left {
-    transition: left ($duration * $multiplier) $swift-ease-in-out-timing-function,
-        right $duration $swift-ease-in-out-timing-function;
-  }
-  &._md-right {
-    transition: left $duration $swift-ease-in-out-timing-function,
-        right ($duration * $multiplier) $swift-ease-in-out-timing-function;
-  }
-
-  // By default $ngAnimate looks for transition durations on the element, when using ng-hide, ng-if, ng-show.
-  // The ink bar has a transition duration applied, which means, that $ngAnimate delays the hide process.
-  // To avoid this, we need to reset the transition, when $ngAnimate looks for the duration.
-  &.ng-animate {
-    transition: none;
-  }
-
-}
-
-md-nav-extra-content {
-  min-height: 48px;
-  padding-right: 12px;
 }
 
 $progress-circular-indeterminate-duration: 1568.63ms !default;
@@ -5429,6 +5429,176 @@ md-select-menu[multiple] {
   }
 }
 
+$sidenav-mobile-width: 320px !default;
+$sidenav-desktop-width: 400px !default;
+$sidenav-min-space: 56px !default;
+
+md-sidenav {
+  box-sizing: border-box;
+  position: absolute;
+  flex-direction: column;
+  z-index: $z-index-sidenav;
+
+  width: $sidenav-mobile-width;
+  max-width: $sidenav-mobile-width;
+  bottom: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+
+  ul {
+    list-style: none;
+  }
+
+  // Animation Comment Syntax: [mdLockedOpen]|[mdClosed]
+  // mdLockedOpen states: unlocked, locked, any
+  // mdClosed states: open, closed, any
+  // Default state: unlocked|open
+
+  // unlocked|closed
+  &.md-closed {
+    display: none;
+  }
+
+  // any|open <=> any|closed
+  &.md-closed-add,
+  &.md-closed-remove {
+    display: flex;
+    transition: 0.2s ease-in all;
+  }
+
+  // any|open <=> any|closed (animating)
+  &.md-closed-add.md-closed-add-active,
+  &.md-closed-remove.md-closed-remove-active {
+    transition: $swift-ease-out;
+  }
+
+  // unlocked|any <=> locked|any
+  &.md-locked-open-add,
+  &.md-locked-open-remove {
+    position: static;
+    display: flex;
+    transform: translate3d(0, 0, 0);
+  }
+
+  // locked|any
+  &.md-locked-open,
+  &.md-locked-open.md-closed,
+  &.md-locked-open.md-closed.md-sidenav-left,
+  &.md-locked-open.md-closed.md-sidenav-right {
+    position: static;
+    display: flex;
+    transform: translate3d(0, 0, 0);
+  }
+
+  // locked|closed => unlock|closed
+  &.md-locked-open-remove.md-closed {
+    position: static;
+    display: flex;
+    transform: translate3d(0, 0, 0);
+  }
+
+  // unlocked|closed => locked|closed
+  &.md-closed.md-locked-open-add {
+    position: static;
+    display: flex;
+    transform: translate3d(0%, 0, 0);
+  }
+
+  // unlocked|closed => locked|closed (pre-animation)
+  &.md-closed.md-locked-open-add:not(.md-locked-open-add-active) {
+    transition: width $swift-ease-in-duration $swift-ease-in-timing-function,
+                min-width $swift-ease-in-duration $swift-ease-in-timing-function;
+    width: 0 !important;
+    min-width: 0 !important;
+  }
+
+  // unlocked|closed => locked|closed (animating)
+  &.md-closed.md-locked-open-add-active {
+    transition: width $swift-ease-in-duration $swift-ease-in-timing-function,
+                min-width $swift-ease-in-duration $swift-ease-in-timing-function;
+  }
+
+  // locked|any => unlocked|any (animating)
+  &.md-locked-open-remove-active {
+    transition: width $swift-ease-in-duration $swift-ease-in-timing-function,
+                min-width $swift-ease-in-duration $swift-ease-in-timing-function;
+    width: 0 !important;
+    min-width: 0 !important;
+  }
+
+  @extend .md-sidenav-left;
+}
+.md-sidenav-backdrop.md-locked-open {
+  display: none;
+}
+
+.md-sidenav-left {
+  left: 0;
+  top: 0;
+  transform: translate3d(0%, 0, 0);
+  &.md-closed {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+.md-sidenav-right {
+  left: 100%;
+  top: 0;
+  transform: translate(-100%, 0);
+  &.md-closed {
+    transform: translate(0%, 0);
+  }
+}
+
+@media (min-width: $layout-breakpoint-xs) {
+  md-sidenav {
+    max-width: $sidenav-desktop-width;
+  }
+}
+
+@media (max-width: $sidenav-desktop-width + $sidenav-min-space) {
+  md-sidenav {
+    width: calc(100% - #{$sidenav-min-space});
+    min-width: calc(100% - #{$sidenav-min-space});
+    max-width: calc(100% - #{$sidenav-min-space});
+  }
+}
+
+// IE Only
+@media screen and (-ms-high-contrast: active) {
+  .md-sidenav-left {
+    border-right: 1px solid #fff;
+  }
+  .md-sidenav-right {
+    border-left: 1px solid #fff;
+  }
+}
+
+.md-sticky-clone {
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 0;
+  position: absolute !important;
+
+  transform: translate3d(-9999px,-9999px,0);
+
+  &[sticky-state="active"] {
+    transform: translate3d(0, 0, 0);
+    &:not(.md-sticky-no-effect) .md-subheader-inner {
+      animation: subheaderStickyHoverIn 0.3s ease-out both;
+    }
+  }
+}
+
+[md-swipe-left], [md-swipe-right] {
+    touch-action : pan-y;
+}
+
+[md-swipe-up], [md-swipe-down] {
+    touch-action : pan-x;
+}
+
 $slider-background-color:  rgb(200, 200, 200) !default;
 $slider-size:  48px !default;
 $slider-min-size:  128px !default;
@@ -5926,151 +6096,6 @@ md-slider-container {
 }
 
 
-$sidenav-mobile-width: 320px !default;
-$sidenav-desktop-width: 400px !default;
-$sidenav-min-space: 56px !default;
-
-md-sidenav {
-  box-sizing: border-box;
-  position: absolute;
-  flex-direction: column;
-  z-index: $z-index-sidenav;
-
-  width: $sidenav-mobile-width;
-  max-width: $sidenav-mobile-width;
-  bottom: 0;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-
-  ul {
-    list-style: none;
-  }
-
-  // Animation Comment Syntax: [mdLockedOpen]|[mdClosed]
-  // mdLockedOpen states: unlocked, locked, any
-  // mdClosed states: open, closed, any
-  // Default state: unlocked|open
-
-  // unlocked|closed
-  &.md-closed {
-    display: none;
-  }
-
-  // any|open <=> any|closed
-  &.md-closed-add,
-  &.md-closed-remove {
-    display: flex;
-    transition: 0.2s ease-in all;
-  }
-
-  // any|open <=> any|closed (animating)
-  &.md-closed-add.md-closed-add-active,
-  &.md-closed-remove.md-closed-remove-active {
-    transition: $swift-ease-out;
-  }
-
-  // unlocked|any <=> locked|any
-  &.md-locked-open-add,
-  &.md-locked-open-remove {
-    position: static;
-    display: flex;
-    transform: translate3d(0, 0, 0);
-  }
-
-  // locked|any
-  &.md-locked-open,
-  &.md-locked-open.md-closed,
-  &.md-locked-open.md-closed.md-sidenav-left,
-  &.md-locked-open.md-closed.md-sidenav-right {
-    position: static;
-    display: flex;
-    transform: translate3d(0, 0, 0);
-  }
-
-  // locked|closed => unlock|closed
-  &.md-locked-open-remove.md-closed {
-    position: static;
-    display: flex;
-    transform: translate3d(0, 0, 0);
-  }
-
-  // unlocked|closed => locked|closed
-  &.md-closed.md-locked-open-add {
-    position: static;
-    display: flex;
-    transform: translate3d(0%, 0, 0);
-  }
-
-  // unlocked|closed => locked|closed (pre-animation)
-  &.md-closed.md-locked-open-add:not(.md-locked-open-add-active) {
-    transition: width $swift-ease-in-duration $swift-ease-in-timing-function,
-                min-width $swift-ease-in-duration $swift-ease-in-timing-function;
-    width: 0 !important;
-    min-width: 0 !important;
-  }
-
-  // unlocked|closed => locked|closed (animating)
-  &.md-closed.md-locked-open-add-active {
-    transition: width $swift-ease-in-duration $swift-ease-in-timing-function,
-                min-width $swift-ease-in-duration $swift-ease-in-timing-function;
-  }
-
-  // locked|any => unlocked|any (animating)
-  &.md-locked-open-remove-active {
-    transition: width $swift-ease-in-duration $swift-ease-in-timing-function,
-                min-width $swift-ease-in-duration $swift-ease-in-timing-function;
-    width: 0 !important;
-    min-width: 0 !important;
-  }
-
-  @extend .md-sidenav-left;
-}
-.md-sidenav-backdrop.md-locked-open {
-  display: none;
-}
-
-.md-sidenav-left {
-  left: 0;
-  top: 0;
-  transform: translate3d(0%, 0, 0);
-  &.md-closed {
-    transform: translate3d(-100%, 0, 0);
-  }
-}
-
-.md-sidenav-right {
-  left: 100%;
-  top: 0;
-  transform: translate(-100%, 0);
-  &.md-closed {
-    transform: translate(0%, 0);
-  }
-}
-
-@media (min-width: $layout-breakpoint-xs) {
-  md-sidenav {
-    max-width: $sidenav-desktop-width;
-  }
-}
-
-@media (max-width: $sidenav-desktop-width + $sidenav-min-space) {
-  md-sidenav {
-    width: calc(100% - #{$sidenav-min-space});
-    min-width: calc(100% - #{$sidenav-min-space});
-    max-width: calc(100% - #{$sidenav-min-space});
-  }
-}
-
-// IE Only
-@media screen and (-ms-high-contrast: active) {
-  .md-sidenav-left {
-    border-right: 1px solid #fff;
-  }
-  .md-sidenav-right {
-    border-left: 1px solid #fff;
-  }
-}
-
 $subheader-line-height: 1em !default;
 $subheader-font-size: rem(1.4) !default;
 $subheader-padding: ($baseline-grid * 2) !default;
@@ -6139,29 +6164,239 @@ $subheader-sticky-shadow: 0px 2px 4px 0 rgba(0,0,0,0.16) !default;
   }
 }
 
-.md-sticky-clone {
-  z-index: 2;
-  top: 0;
-  left: 0;
-  right: 0;
-  position: absolute !important;
+// See height set globally, depended on by buttons
 
-  transform: translate3d(-9999px,-9999px,0);
+$md-toast-content-padding: 3 * $baseline-grid - $button-left-right-padding !default;
+$md-toast-button-left-margin: 3 * $baseline-grid - 2 * $button-left-right-padding !default;
+$md-toast-text-padding: $button-left-right-padding !default;
 
-  &[sticky-state="active"] {
-    transform: translate3d(0, 0, 0);
-    &:not(.md-sticky-no-effect) .md-subheader-inner {
-      animation: subheaderStickyHoverIn 0.3s ease-out both;
+
+.md-toast-text {
+  padding: 0 $md-toast-text-padding;
+}
+
+md-toast {
+  position: absolute;
+  z-index: $z-index-toast;
+
+  box-sizing: border-box;
+  cursor: default;
+  overflow: hidden;
+
+  // Add some padding to the outer toast container so that the wrapper's box shadow is visible
+  padding: $toast-margin;
+
+  // Setup opacity transition on whole toast
+  opacity: 1;
+  transition: $swift-ease-out;
+
+  .md-toast-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    max-height: 7 * $toast-height;
+    max-width: 100%;
+
+    min-height: 48px;
+    // Since we're vertically centering our text by using flexbox and having a min-height, we need to apply
+    // a fix for an IE11 flexbug, otherwise the text won't be centered vertically.
+    @include ie11-min-height-flexbug(48px);
+
+    padding: 0 $md-toast-content-padding;
+
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    border-radius: 2px;
+    font-size: 14px;
+
+    overflow: hidden;
+
+    // Setup for transform transitions on inner content
+    transform: translate3d(0, 0, 0) rotateZ(0deg);
+    transition: $swift-ease-out;
+
+    @include rtl(justify-content, flex-start, flex-end);
+
+    span {
+      // Layout  [flex]
+      flex:1 1 0%;
+      box-sizing:border-box;
+      min-width :0;
+    }
+  }
+
+  &.md-capsule {
+    border-radius: 24px;
+
+    .md-toast-content {
+      border-radius: 24px;
+    }
+  }
+
+  &.ng-leave-active {
+    .md-toast-content {
+      transition: $swift-ease-in;
+    }
+  }
+
+  /* Transition differently when swiping */
+  &.md-swipeleft,
+  &.md-swiperight,
+  &.md-swipeup,
+  &.md-swipedown {
+    .md-toast-content {
+      transition: $swift-ease-out;
+    }
+  }
+
+  &.ng-enter {
+    opacity: 0;
+    .md-toast-content {
+      transform: translate3d(0, 100%, 0);
+    }
+    &.md-top {
+      .md-toast-content {
+        transform: translate3d(0, -100%, 0);
+      }
+    }
+    &.ng-enter-active {
+      opacity: 1;
+      .md-toast-content {
+        transform: translate3d(0, 0, 0);
+      }
+    }
+  }
+  /*
+   * When the toast doesn't take up the whole screen,
+   * make it rotate when the user swipes it away
+   */
+  &.ng-leave.ng-leave-active {
+    .md-toast-content {
+      opacity: 0;
+      transform: translate3d(0, 100%, 0);
+    }
+
+    &.md-swipeup {
+      .md-toast-content {
+        transform: translate3d(0, -50%, 0);
+      }
+    }
+    &.md-swipedown {
+      .md-toast-content {
+        transform: translate3d(0, 50%, 0);
+      }
+    }
+    &.md-top {
+      .md-toast-content {
+        transform: translate3d(0, -100%, 0);
+      }
+    }
+  }
+
+  .md-action {
+    line-height: 19px;
+    margin-left: 24px;
+    margin-right: 0;
+    cursor: pointer;
+    text-transform: uppercase;
+    float: right;
+  }
+
+  .md-button {
+    min-width: 0;
+    @include rtl(margin-right, 0, $md-toast-button-left-margin);
+    @include rtl(margin-left, $md-toast-button-left-margin, 0);
+  }
+}
+
+@media (max-width: $layout-breakpoint-sm - 1) {
+  md-toast {
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    border-radius: 0;
+    bottom: 0;
+    padding: 0;
+
+    &.ng-leave.ng-leave-active {
+      &.md-swipeup {
+        .md-toast-content {
+          transform: translate3d(0, -50%, 0);
+        }
+      }
+      &.md-swipedown {
+        .md-toast-content {
+          transform: translate3d(0, 50%, 0);
+        }
+      }
     }
   }
 }
 
-[md-swipe-left], [md-swipe-right] {
-    touch-action : pan-y;
+@media (min-width: $layout-breakpoint-sm) {
+  md-toast {
+    min-width: 288px + $toast-margin * 2;
+    &.md-bottom {
+      bottom: 0;
+    }
+    &.md-left {
+      left: 0;
+    }
+    &.md-right {
+      right: 0;
+    }
+    &.md-top {
+      top: 0;
+    }
+
+    // Support for RTL alignment
+    &._md-start {
+      @include rtl-prop(left, right, 0, auto);
+    }
+
+    &._md-end {
+      @include rtl-prop(right, left, 0, auto);
+    }
+
+    /*
+   * When the toast doesn't take up the whole screen,
+   * make it rotate when the user swipes it away
+   */
+    &.ng-leave.ng-leave-active {
+      &.md-swipeleft {
+        .md-toast-content {
+          transform: translate3d(-50%, 0, 0);
+        }
+      }
+      &.md-swiperight {
+        .md-toast-content {
+          transform: translate3d(50%, 0, 0);
+        }
+      }
+    }
+  }
 }
 
-[md-swipe-up], [md-swipe-down] {
-    touch-action : pan-x;
+@media (min-width: $layout-breakpoint-lg) {
+  md-toast {
+    .md-toast-content {
+      max-width: $baseline-grid * 71;
+    }
+  }
+}
+
+@media screen and (-ms-high-contrast: active) {
+  md-toast {
+    border: 1px solid #fff;
+  }
+}
+
+
+// While animating, set the toast parent's overflow to hidden so scrollbars do not appear
+.md-toast-animating {
+  overflow: hidden !important;
 }
 
 $switch-width: 36px !default;
@@ -6333,6 +6568,187 @@ md-switch {
     background-color: #fff;
   }
 }
+
+// Standard/Desktop Heights
+$md-toolbar-height: $baseline-grid * 8 !default;
+$md-toolbar-medium-tall-height: 88px !default;
+$md-toolbar-tall-height: 128px !default;
+
+// Mobile device heights
+$md-toolbar-height-mobile-portrait: 56px !default;
+$md-toolbar-height-mobile-landscape: 48px !default;
+
+$md-toolbar-indent-margin: 64px !default;
+$md-toolbar-padding: 16px !default;
+
+$icon-button-margin-offset: rem(-0.800) !default;
+
+md-toolbar {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+
+  position: relative;
+  z-index: 2;
+
+  font-size: rem(2.0);
+  min-height: $md-toolbar-height;
+  width: 100%;
+
+  &._md-toolbar-transitions {
+    transition-duration: $swift-ease-in-out-duration;
+    transition-timing-function: $swift-ease-in-out-timing-function;
+    transition-property: background-color, fill, color;
+  }
+
+  &.md-whiteframe-z1-add, &.md-whiteframe-z1-remove {
+    transition: box-shadow $swift-ease-in-out-duration linear;
+  }
+
+  md-toolbar-filler {
+    width: 9 * $baseline-grid;
+  }
+
+  *,
+  *:before,
+  *:after {
+    box-sizing: border-box;
+  }
+
+  // By default $ngAnimate looks for transition durations on the element, when using ng-hide, ng-if, ng-show.
+  // The toolbar has a transition duration applied, which means, that $ngAnimate delays the hide process.
+  // To avoid this, we need to reset the transition, when $ngAnimate looks for the duration.
+  &.ng-animate {
+    transition: none;
+  }
+
+  &.md-tall {
+    height: $md-toolbar-tall-height;
+    min-height: $md-toolbar-tall-height;
+    max-height: $md-toolbar-tall-height;
+  }
+
+  &.md-medium-tall {
+    height: $md-toolbar-medium-tall-height;
+    min-height: $md-toolbar-medium-tall-height;
+    max-height: $md-toolbar-medium-tall-height;
+
+    .md-toolbar-tools {
+      height: 48px;
+      min-height: 48px;
+      max-height: 48px;
+    }
+  }
+
+  > .md-indent {
+    @include rtl-prop(margin-left, margin-right, $md-toolbar-indent-margin, auto);
+  }
+
+  ~ md-content {
+    > md-list {
+      padding: 0;
+
+      md-list-item:last-child {
+        md-divider {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+.md-toolbar-tools {
+  font-size: $title-font-size-base;
+  letter-spacing: 0.005em;
+  box-sizing: border-box;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+
+  width: 100%;
+  height: $md-toolbar-height;
+  max-height: $md-toolbar-height;
+  padding: 0 $md-toolbar-padding;
+  margin: 0;
+
+  h1, h2, h3 {
+    font-size: inherit;
+    font-weight: inherit;
+    margin: inherit;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .fill-height {
+    display: flex;
+    align-items: center;
+  }
+  md-checkbox {
+    margin: inherit;
+  }
+  .md-button {
+    margin-top: 0;
+    margin-bottom: 0;
+
+    &, &.md-icon-button md-icon {
+      transition-duration: $swift-ease-in-out-duration;
+      transition-timing-function: $swift-ease-in-out-timing-function;
+      transition-property: background-color, fill, color;
+
+      // Normally .md-button is already resetting the transition, when $ngAnimate looks for the duration,
+      // but in this case, the selector has a higher specificity than the `reset selector`, which means, that
+      // we need to reset the transition our self.
+      &.ng-animate {
+        transition: none;
+      }
+    }
+  }
+  &> .md-button:first-child {
+    @include rtl-prop(margin-left, margin-right, $icon-button-margin-offset, auto);
+  }
+  &> .md-button:last-child {
+    @include rtl-prop(margin-right, margin-left, $icon-button-margin-offset, auto);
+  }
+
+  &> md-menu:last-child {
+    @include rtl-prop(margin-right, margin-left, $icon-button-margin-offset, auto);
+    & > .md-button {
+      @include rtl-prop(margin-right, margin-left, 0, auto);
+    }
+  }
+
+  @media screen and (-ms-high-contrast: active) {
+    border-bottom: 1px solid #fff;
+  }
+}
+
+// Handle mobile portrait
+@media (min-width: 0) and (max-width: $layout-breakpoint-sm - 1) and (orientation: portrait) {
+  md-toolbar {
+    min-height: $md-toolbar-height-mobile-portrait;
+  }
+
+  .md-toolbar-tools {
+    height: $md-toolbar-height-mobile-portrait;
+    max-height: $md-toolbar-height-mobile-portrait;
+  }
+}
+
+// Handle mobile landscape
+@media (min-width: 0) and (max-width: $layout-breakpoint-sm - 1) and (orientation: landscape) {
+  md-toolbar {
+    min-height: $md-toolbar-height-mobile-landscape;
+  }
+
+  .md-toolbar-tools {
+    height: $md-toolbar-height-mobile-landscape;
+    max-height: $md-toolbar-height-mobile-landscape;
+  }
+}
+
 
 $tabs-paginator-width: $baseline-grid * 4 !default;
 $tabs-tab-width: $baseline-grid * 12 !default;
@@ -6631,422 +7047,6 @@ md-toolbar + md-tabs, md-toolbar + md-dialog-content md-tabs {
   border-top-right-radius: 0;
 }
 
-// See height set globally, depended on by buttons
-
-$md-toast-content-padding: 3 * $baseline-grid - $button-left-right-padding !default;
-$md-toast-button-left-margin: 3 * $baseline-grid - 2 * $button-left-right-padding !default;
-$md-toast-text-padding: $button-left-right-padding !default;
-
-
-.md-toast-text {
-  padding: 0 $md-toast-text-padding;
-}
-
-md-toast {
-  position: absolute;
-  z-index: $z-index-toast;
-
-  box-sizing: border-box;
-  cursor: default;
-  overflow: hidden;
-
-  // Add some padding to the outer toast container so that the wrapper's box shadow is visible
-  padding: $toast-margin;
-
-  // Setup opacity transition on whole toast
-  opacity: 1;
-  transition: $swift-ease-out;
-
-  .md-toast-content {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-
-    max-height: 7 * $toast-height;
-    max-width: 100%;
-
-    min-height: 48px;
-    // Since we're vertically centering our text by using flexbox and having a min-height, we need to apply
-    // a fix for an IE11 flexbug, otherwise the text won't be centered vertically.
-    @include ie11-min-height-flexbug(48px);
-
-    padding: 0 $md-toast-content-padding;
-
-    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
-    border-radius: 2px;
-    font-size: 14px;
-
-    overflow: hidden;
-
-    // Setup for transform transitions on inner content
-    transform: translate3d(0, 0, 0) rotateZ(0deg);
-    transition: $swift-ease-out;
-
-    @include rtl(justify-content, flex-start, flex-end);
-
-    span {
-      // Layout  [flex]
-      flex:1 1 0%;
-      box-sizing:border-box;
-      min-width :0;
-    }
-  }
-
-  &.md-capsule {
-    border-radius: 24px;
-
-    .md-toast-content {
-      border-radius: 24px;
-    }
-  }
-
-  &.ng-leave-active {
-    .md-toast-content {
-      transition: $swift-ease-in;
-    }
-  }
-
-  /* Transition differently when swiping */
-  &.md-swipeleft,
-  &.md-swiperight,
-  &.md-swipeup,
-  &.md-swipedown {
-    .md-toast-content {
-      transition: $swift-ease-out;
-    }
-  }
-
-  &.ng-enter {
-    opacity: 0;
-    .md-toast-content {
-      transform: translate3d(0, 100%, 0);
-    }
-    &.md-top {
-      .md-toast-content {
-        transform: translate3d(0, -100%, 0);
-      }
-    }
-    &.ng-enter-active {
-      opacity: 1;
-      .md-toast-content {
-        transform: translate3d(0, 0, 0);
-      }
-    }
-  }
-  /*
-   * When the toast doesn't take up the whole screen,
-   * make it rotate when the user swipes it away
-   */
-  &.ng-leave.ng-leave-active {
-    .md-toast-content {
-      opacity: 0;
-      transform: translate3d(0, 100%, 0);
-    }
-
-    &.md-swipeup {
-      .md-toast-content {
-        transform: translate3d(0, -50%, 0);
-      }
-    }
-    &.md-swipedown {
-      .md-toast-content {
-        transform: translate3d(0, 50%, 0);
-      }
-    }
-    &.md-top {
-      .md-toast-content {
-        transform: translate3d(0, -100%, 0);
-      }
-    }
-  }
-
-  .md-action {
-    line-height: 19px;
-    margin-left: 24px;
-    margin-right: 0;
-    cursor: pointer;
-    text-transform: uppercase;
-    float: right;
-  }
-
-  .md-button {
-    min-width: 0;
-    @include rtl(margin-right, 0, $md-toast-button-left-margin);
-    @include rtl(margin-left, $md-toast-button-left-margin, 0);
-  }
-}
-
-@media (max-width: $layout-breakpoint-sm - 1) {
-  md-toast {
-    left: 0;
-    right: 0;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    border-radius: 0;
-    bottom: 0;
-    padding: 0;
-
-    &.ng-leave.ng-leave-active {
-      &.md-swipeup {
-        .md-toast-content {
-          transform: translate3d(0, -50%, 0);
-        }
-      }
-      &.md-swipedown {
-        .md-toast-content {
-          transform: translate3d(0, 50%, 0);
-        }
-      }
-    }
-  }
-}
-
-@media (min-width: $layout-breakpoint-sm) {
-  md-toast {
-    min-width: 288px + $toast-margin * 2;
-    &.md-bottom {
-      bottom: 0;
-    }
-    &.md-left {
-      left: 0;
-    }
-    &.md-right {
-      right: 0;
-    }
-    &.md-top {
-      top: 0;
-    }
-
-    // Support for RTL alignment
-    &._md-start {
-      @include rtl-prop(left, right, 0, auto);
-    }
-
-    &._md-end {
-      @include rtl-prop(right, left, 0, auto);
-    }
-
-    /*
-   * When the toast doesn't take up the whole screen,
-   * make it rotate when the user swipes it away
-   */
-    &.ng-leave.ng-leave-active {
-      &.md-swipeleft {
-        .md-toast-content {
-          transform: translate3d(-50%, 0, 0);
-        }
-      }
-      &.md-swiperight {
-        .md-toast-content {
-          transform: translate3d(50%, 0, 0);
-        }
-      }
-    }
-  }
-}
-
-@media (min-width: $layout-breakpoint-lg) {
-  md-toast {
-    .md-toast-content {
-      max-width: $baseline-grid * 71;
-    }
-  }
-}
-
-@media screen and (-ms-high-contrast: active) {
-  md-toast {
-    border: 1px solid #fff;
-  }
-}
-
-
-// While animating, set the toast parent's overflow to hidden so scrollbars do not appear
-.md-toast-animating {
-  overflow: hidden !important;
-}
-
-// Standard/Desktop Heights
-$md-toolbar-height: $baseline-grid * 8 !default;
-$md-toolbar-medium-tall-height: 88px !default;
-$md-toolbar-tall-height: 128px !default;
-
-// Mobile device heights
-$md-toolbar-height-mobile-portrait: 56px !default;
-$md-toolbar-height-mobile-landscape: 48px !default;
-
-$md-toolbar-indent-margin: 64px !default;
-$md-toolbar-padding: 16px !default;
-
-$icon-button-margin-offset: rem(-0.800) !default;
-
-md-toolbar {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-
-  position: relative;
-  z-index: 2;
-
-  font-size: rem(2.0);
-  min-height: $md-toolbar-height;
-  width: 100%;
-
-  &._md-toolbar-transitions {
-    transition-duration: $swift-ease-in-out-duration;
-    transition-timing-function: $swift-ease-in-out-timing-function;
-    transition-property: background-color, fill, color;
-  }
-
-  &.md-whiteframe-z1-add, &.md-whiteframe-z1-remove {
-    transition: box-shadow $swift-ease-in-out-duration linear;
-  }
-
-  md-toolbar-filler {
-    width: 9 * $baseline-grid;
-  }
-
-  *,
-  *:before,
-  *:after {
-    box-sizing: border-box;
-  }
-
-  // By default $ngAnimate looks for transition durations on the element, when using ng-hide, ng-if, ng-show.
-  // The toolbar has a transition duration applied, which means, that $ngAnimate delays the hide process.
-  // To avoid this, we need to reset the transition, when $ngAnimate looks for the duration.
-  &.ng-animate {
-    transition: none;
-  }
-
-  &.md-tall {
-    height: $md-toolbar-tall-height;
-    min-height: $md-toolbar-tall-height;
-    max-height: $md-toolbar-tall-height;
-  }
-
-  &.md-medium-tall {
-    height: $md-toolbar-medium-tall-height;
-    min-height: $md-toolbar-medium-tall-height;
-    max-height: $md-toolbar-medium-tall-height;
-
-    .md-toolbar-tools {
-      height: 48px;
-      min-height: 48px;
-      max-height: 48px;
-    }
-  }
-
-  > .md-indent {
-    @include rtl-prop(margin-left, margin-right, $md-toolbar-indent-margin, auto);
-  }
-
-  ~ md-content {
-    > md-list {
-      padding: 0;
-
-      md-list-item:last-child {
-        md-divider {
-          display: none;
-        }
-      }
-    }
-  }
-}
-
-.md-toolbar-tools {
-  font-size: $title-font-size-base;
-  letter-spacing: 0.005em;
-  box-sizing: border-box;
-  font-weight: 400;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-
-  width: 100%;
-  height: $md-toolbar-height;
-  max-height: $md-toolbar-height;
-  padding: 0 $md-toolbar-padding;
-  margin: 0;
-
-  h1, h2, h3 {
-    font-size: inherit;
-    font-weight: inherit;
-    margin: inherit;
-  }
-
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .fill-height {
-    display: flex;
-    align-items: center;
-  }
-  md-checkbox {
-    margin: inherit;
-  }
-  .md-button {
-    margin-top: 0;
-    margin-bottom: 0;
-
-    &, &.md-icon-button md-icon {
-      transition-duration: $swift-ease-in-out-duration;
-      transition-timing-function: $swift-ease-in-out-timing-function;
-      transition-property: background-color, fill, color;
-
-      // Normally .md-button is already resetting the transition, when $ngAnimate looks for the duration,
-      // but in this case, the selector has a higher specificity than the `reset selector`, which means, that
-      // we need to reset the transition our self.
-      &.ng-animate {
-        transition: none;
-      }
-    }
-  }
-  &> .md-button:first-child {
-    @include rtl-prop(margin-left, margin-right, $icon-button-margin-offset, auto);
-  }
-  &> .md-button:last-child {
-    @include rtl-prop(margin-right, margin-left, $icon-button-margin-offset, auto);
-  }
-
-  &> md-menu:last-child {
-    @include rtl-prop(margin-right, margin-left, $icon-button-margin-offset, auto);
-    & > .md-button {
-      @include rtl-prop(margin-right, margin-left, 0, auto);
-    }
-  }
-
-  @media screen and (-ms-high-contrast: active) {
-    border-bottom: 1px solid #fff;
-  }
-}
-
-// Handle mobile portrait
-@media (min-width: 0) and (max-width: $layout-breakpoint-sm - 1) and (orientation: portrait) {
-  md-toolbar {
-    min-height: $md-toolbar-height-mobile-portrait;
-  }
-
-  .md-toolbar-tools {
-    height: $md-toolbar-height-mobile-portrait;
-    max-height: $md-toolbar-height-mobile-portrait;
-  }
-}
-
-// Handle mobile landscape
-@media (min-width: 0) and (max-width: $layout-breakpoint-sm - 1) and (orientation: landscape) {
-  md-toolbar {
-    min-height: $md-toolbar-height-mobile-landscape;
-  }
-
-  .md-toolbar-tools {
-    height: $md-toolbar-height-mobile-landscape;
-    max-height: $md-toolbar-height-mobile-landscape;
-  }
-}
-
-
 $tooltip-fontsize-lg: 10px !default;
 $tooltip-fontsize-sm: 14px !default;
 $tooltip-height-lg: 22px !default;
@@ -7116,81 +7116,6 @@ $tooltip-max-width: 32px !default;
     //transition-duration: 150ms;
     transform: scale(0);
     opacity: 0;
-  }
-}
-
-.md-truncate {
-  overflow: hidden;
-  white-space: nowrap;
-
-  // Default overflow is ellipsis
-  text-overflow: ellipsis;
-
-  // Allow override to use clipping
-  &.md-clip {
-    text-overflow: clip;
-  }
-
-  // This is a flex-specific hack that forces the element to only take up available space.
-  &.flex {
-    width: 0;
-  }
-}
-$virtual-repeat-scrollbar-width: 16px !default;
-
-.md-virtual-repeat-container {
-  box-sizing: border-box;
-  display: block;
-  margin: 0;
-  overflow: hidden;
-  padding: 0;
-  position: relative;
-
-  .md-virtual-repeat-scroller {
-    bottom: 0;
-    box-sizing: border-box;
-    left: 0;
-    margin: 0;
-    overflow-x: hidden;
-    padding: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .md-virtual-repeat-sizer {
-    box-sizing: border-box;
-    height: 1px;
-    display: block;
-    margin: 0;
-    padding: 0;
-    width: 1px;
-  }
-
-  .md-virtual-repeat-offsetter {
-    box-sizing: border-box;
-    left: 0;
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-}
-
-.md-virtual-repeat-container.md-orient-horizontal {
-  .md-virtual-repeat-scroller {
-    overflow-x: auto;
-    overflow-y: hidden;
-  }
-
-  .md-virtual-repeat-offsetter {
-    // Leave room for the scroll bar.
-    // TODO: Will probably need to perform measurements at runtime.
-    bottom: $virtual-repeat-scrollbar-width;
-    @include rtl-prop(right, left, auto, auto);
-    white-space: nowrap;
   }
 }
 
@@ -7279,6 +7204,81 @@ $virtual-repeat-scrollbar-width: 16px !default;
   }
 }
 
+$virtual-repeat-scrollbar-width: 16px !default;
+
+.md-virtual-repeat-container {
+  box-sizing: border-box;
+  display: block;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+
+  .md-virtual-repeat-scroller {
+    bottom: 0;
+    box-sizing: border-box;
+    left: 0;
+    margin: 0;
+    overflow-x: hidden;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .md-virtual-repeat-sizer {
+    box-sizing: border-box;
+    height: 1px;
+    display: block;
+    margin: 0;
+    padding: 0;
+    width: 1px;
+  }
+
+  .md-virtual-repeat-offsetter {
+    box-sizing: border-box;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+
+.md-virtual-repeat-container.md-orient-horizontal {
+  .md-virtual-repeat-scroller {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .md-virtual-repeat-offsetter {
+    // Leave room for the scroll bar.
+    // TODO: Will probably need to perform measurements at runtime.
+    bottom: $virtual-repeat-scrollbar-width;
+    @include rtl-prop(right, left, auto, auto);
+    white-space: nowrap;
+  }
+}
+
+.md-truncate {
+  overflow: hidden;
+  white-space: nowrap;
+
+  // Default overflow is ellipsis
+  text-overflow: ellipsis;
+
+  // Allow override to use clipping
+  &.md-clip {
+    text-overflow: clip;
+  }
+
+  // This is a flex-specific hack that forces the element to only take up available space.
+  &.flex {
+    width: 0;
+  }
+}
 /*
 * Since Layout API uses ng-cloak to hide the dom elements while layouts are adjusted
 */

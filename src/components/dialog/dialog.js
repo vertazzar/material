@@ -677,7 +677,7 @@ function MdDialogProvider($$interimElementProvider) {
     var initialWidth = $($window).width(),
         initialHeight = $($window).height();
 
-    $window.on('orientationchange', function () {
+    $($window).on('orientationchange', function () {
         initialWidth = $($window).width();
         initialHeight = $($window).height();
     });
