@@ -1199,6 +1199,35 @@ function MdDialogProvider($$interimElementProvider) {
       }
     }
 
+    function scrollToElement(container) {
+        var $scrollingContainer = container.find('md-dialog-content');
+        if ($scrollingContainer.length) {
+            var input = $(document.activeElement);
+            var objectheight;
+            var mdContainer = input.parents('md-input-container:first');
+            if (mdContainer.length) {
+                input = mdContainer;
+                var chips = input.parents('md-chips-wrap:first');
+                if (chips.length) {
+                    input = chips;
+                    var marginized = chips.parents('.md-input-container-margin:first');
+                    if (marginized.length) {
+                        input = marginized;
+                    }
+                }
+            }
+            objectheight = input.outerHeight(true);
+            var toolbar = $scrollingContainer.parents('md-toolbar:first');
+            var theight = 0;
+            if (toolbar.length) {
+                theight = toolbar.height();
+            }
+
+            var scrollto = ($scrollingContainer.scrollTop() + input.offset().top) - (theight + objectheight + 20);
+            $scrollingContainer.scrollTop(scrollto);
+        }
+    }
+
     /**
      * Ensure the dialog container fill-stretches to the viewport
      */
@@ -1212,6 +1241,9 @@ function MdDialogProvider($$interimElementProvider) {
           if (padding.length) {
               padding.css('padding-bottom', initialHeight - $(window).height());
               height = initialHeight;
+              if (document.activeElement && container.find(document.activeElement)) {
+                  scrollToElement(container);
+              }
           }
       }
 
