@@ -674,6 +674,14 @@ function MdDialogProvider($$interimElementProvider) {
   function dialogDefaultOptions($mdDialog, $mdAria, $mdUtil, $mdConstant, $animate, $document, $window, $rootElement,
                                 $log, $injector, $mdTheming, $interpolate, $mdInteraction) {
 
+    var initialWidth = $($window).width(),
+        initialHeight = $($window).height();
+
+    $window.on('orientationchange', function () {
+        initialWidth = $($window).width();
+        initialHeight = $($window).height();
+    });
+
     return {
       hasBackdrop: true,
       isolateScope: true,
@@ -1198,6 +1206,14 @@ function MdDialogProvider($$interimElementProvider) {
       var isFixed = $window.getComputedStyle($document[0].body).position == 'fixed';
       var backdrop = options.backdrop ? $window.getComputedStyle(options.backdrop[0]) : null;
       var height = backdrop ? Math.min($document[0].body.clientHeight, Math.ceil(Math.abs(parseInt(backdrop.height, 10)))) : 0;
+
+      if (window.bowser && bowser.android && window.cordova !== undefined ) {
+          var padding = container.find('.fix-keyboard-over-padding');
+          if (padding.length) {
+              padding.css('padding-bottom', initialHeight - $(window).height());
+              height = initialHeight;
+          }
+      }
 
       var previousStyles = {
         top: container.css('top'),
