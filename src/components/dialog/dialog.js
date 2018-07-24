@@ -1207,7 +1207,7 @@ function MdDialogProvider($$interimElementProvider) {
       var backdrop = options.backdrop ? $window.getComputedStyle(options.backdrop[0]) : null;
       var height = backdrop ? Math.min($document[0].body.clientHeight, Math.ceil(Math.abs(parseInt(backdrop.height, 10)))) : 0;
 
-      if (window.bowser && bowser.android && window.cordova !== undefined ) {
+      if (window.bowser && bowser.android && !window.cordova) {
           var padding = container.find('.fix-keyboard-over-padding');
           if (padding.length) {
               padding.css('padding-bottom', initialHeight - $(window).height());
