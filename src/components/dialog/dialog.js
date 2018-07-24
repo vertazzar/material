@@ -1238,9 +1238,9 @@ function MdDialogProvider($$interimElementProvider) {
 
       if (window.bowser && bowser.android && !window.cordova) {
           var padding = container.find('.fix-keyboard-over-padding');
+          height = initialHeight;
           if (padding.length) {
               padding.css('padding-bottom', initialHeight - $(window).height());
-              height = initialHeight;
               if (document.activeElement && container.find(document.activeElement)) {
                   scrollToElement(container);
               }
