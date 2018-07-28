@@ -682,6 +682,12 @@ function MdDialogProvider($$interimElementProvider) {
         initialHeight = $($window).height();
     });
 
+    $($window).on('resize', function () {
+      var cw = $($window).width(), ch = $($window).height();
+      initialWidth = initialWidth > cw ? cw : initialWidth;
+      initialHeight = initialHeight > ch ? ch : initialHeight;
+    });
+
     return {
       hasBackdrop: true,
       isolateScope: true,
