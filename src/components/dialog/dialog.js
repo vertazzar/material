@@ -684,8 +684,8 @@ function MdDialogProvider($$interimElementProvider) {
 
     $($window).on('resize', function () {
       var cw = $($window).width(), ch = $($window).height();
-      initialWidth = initialWidth > cw ? cw : initialWidth;
-      initialHeight = initialHeight > ch ? ch : initialHeight;
+      initialWidth = cw > initialWidth ? cw : initialWidth;
+      initialHeight = ch > initialHeight ? ch : initialHeight;
     });
 
     return {
