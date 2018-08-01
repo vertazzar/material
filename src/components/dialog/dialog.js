@@ -821,7 +821,9 @@ function MdDialogProvider($$interimElementProvider) {
       if (options.deactivateListeners) {
           options.deactivateListeners();
       }
-      options.unlockScreenReader();
+      if (options.unlockScreenReader) {
+          options.unlockScreenReader();
+      }
       options.hideBackdrop(options.$destroy);
 
       // Remove the focus traps that we added earlier for keeping focus within the dialog.
