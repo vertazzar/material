@@ -732,6 +732,33 @@ VirtualRepeatController.prototype.getItemCount = function() {
   return this.itemsLength;
 };
 
+VirtualRepeatController.prototype.getTotalItemSize = function () {
+  var itemTotalSize = 0;
+
+  if ((!this.items || !this.items[0] || !this.items[0]._getVirtualRepeatSize)) {
+    return this.itemSize * this.getItemCount();
+  }
+  var that = this;
+  var items = (this.items.model ? this.items.model.results : null) || this.items;
+  var proc = 0;
+  angular.forEach(items, function (item) {
+    proc += 1;
+    if (item && item._getVirtualRepeatSize) {
+      itemTotalSize += item._getVirtualRepeatSize();
+    } else {
+      itemTotalSize += that.itemSize || 40;
+    }
+  });
+
+  if (this.getItemCount() > proc) {
+      itemTotalSize += this.itemSize * (this.getItemCount() - proc);
+  }
+  if (isNaN(itemTotalSize)) {
+      itemTotalSize = 0;
+  }
+  return itemTotalSize;
+};
+
 
 /**
  * Updates the order and visible offset of repeated blocks in response to scrolling
@@ -767,7 +794,8 @@ VirtualRepeatController.prototype.virtualRepeatUpdate_ = function(items, oldItem
   this.parentNode = this.$element[0].parentNode;
 
   if (lengthChanged) {
-    this.container.setScrollSize(itemsLength * this.itemSize);
+    // itemsLength * this.itemSize
+    this.container.setScrollSize(this.getTotalItemSize());
   }
 
   // Detach and pool any blocks that are no longer in the viewport.
@@ -938,6 +966,23 @@ VirtualRepeatController.prototype.domFragmentFromBlocks_ = function(blocks) {
   return fragment;
 };
 
+VirtualRepeatController.prototype._getSizesCalculation = function(total) {
+  /*
+  var avgItemSize = this.getTotalItemSize() / this.getItemCount();
+  return (total / avgItemSize);
+   */
+
+  var res = (total / this.getTotalItemSize()) * this.getItemCount();
+  var other = total / this.itemSize;
+  if (other > res) {
+    res = other;
+  }
+  if (isNaN(res)) {
+    res = 0;
+  }
+  return res;
+
+};
 
 /**
  * Updates start and end indexes based on length of repeated items and container size.
@@ -945,11 +990,13 @@ VirtualRepeatController.prototype.domFragmentFromBlocks_ = function(blocks) {
  */
 VirtualRepeatController.prototype.updateIndexes_ = function() {
   var itemsLength = this.items ? this.items.length : 0;
-  var containerLength = Math.ceil(this.container.getSize() / this.itemSize);
+  //var containerLength = Math.ceil(this.container.getSize() / this.itemSize);
+    var containerLength = Math.ceil(this._getSizesCalculation(this.container.getSize()));
+    //console.log(containerLength, Math.ceil(this.container.getSize() / this.itemSize));
 
   this.newStartIndex = Math.max(0, Math.min(
       itemsLength - containerLength,
-      Math.floor(this.container.getScrollOffset() / this.itemSize)));
+      Math.floor(this._getSizesCalculation(this.container.getScrollOffset()))));
   this.newVisibleEnd = this.newStartIndex + containerLength + NUM_EXTRA;
   this.newEndIndex = Math.min(itemsLength, this.newVisibleEnd);
   this.newStartIndex = Math.max(0, this.newStartIndex - NUM_EXTRA);
