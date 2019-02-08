@@ -1243,8 +1243,8 @@ function MdDialogProvider($$interimElementProvider) {
       var isFixed = $window.getComputedStyle($document[0].body).position == 'fixed';
       var backdrop = options.backdrop ? $window.getComputedStyle(options.backdrop[0]) : null;
       var height = backdrop ? Math.min($document[0].body.clientHeight, Math.ceil(Math.abs(parseInt(backdrop.height, 10)))) : 0;
-
-      if (window.bowser && bowser.android && !window.cordova) {
+      // window.bowser && bowser.android && !window.cordova
+      if (false) {
           var padding = container.find('.fix-keyboard-over-padding');
           height = initialHeight;
           if (padding.length) {

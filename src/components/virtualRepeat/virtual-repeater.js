@@ -991,7 +991,7 @@ VirtualRepeatController.prototype._getSizesCalculation = function(total) {
 VirtualRepeatController.prototype.updateIndexes_ = function() {
   var itemsLength = this.items ? this.items.length : 0;
   //var containerLength = Math.ceil(this.container.getSize() / this.itemSize);
-    var containerLength = Math.ceil(this._getSizesCalculation(this.container.getSize()));
+    var containerLength = Math.floor(this._getSizesCalculation(this.container.getSize()));
     //console.log(containerLength, Math.ceil(this.container.getSize() / this.itemSize));
 
   this.newStartIndex = Math.max(0, Math.min(

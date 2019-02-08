@@ -1168,6 +1168,7 @@ function generateTheme(theme, name, nonce, override) {
     });
 
     GENERATED[theme.name] = stylesheets;
+
   }
 
 }
