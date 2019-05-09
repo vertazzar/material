@@ -6,7 +6,7 @@
    *
    * @type {number}
    */
-  var cssAnimationDuration = 300;
+  var cssAnimationDuration = 100;
 
   /**
    * @ngdoc module
@@ -211,7 +211,7 @@
   function MdFabSpeedDialScaleAnimation($timeout) {
     function delayDone(done) { $timeout(done, cssAnimationDuration, false); }
 
-    var delay = 65;
+    var delay = 30;
 
     function runAnimation(element) {
       var el = element[0];
