@@ -225,13 +225,14 @@
       var startZIndex = parseInt(window.getComputedStyle(variablesElement).zIndex);
 
       // Always reset the items to their natural position/state
+      var maxDelay = items.length * delay;
       angular.forEach(items, function(item, index) {
         var styles = item.style,
           offsetDelay = index * delay;
 
         styles.opacity = ctrl.isOpen ? 1 : 0;
         styles.transform = styles.webkitTransform = ctrl.isOpen ? 'scale(1)' : 'scale(0)';
-        styles.transitionDelay = (ctrl.isOpen ? offsetDelay : (items.length - offsetDelay)) + 'ms';
+        styles.transitionDelay = (ctrl.isOpen ? offsetDelay : (maxDelay - offsetDelay)) + 'ms';
 
         // Make the items closest to the trigger have the highest z-index
         styles.zIndex = (items.length - index) + startZIndex;
