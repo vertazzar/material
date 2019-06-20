@@ -18,8 +18,7 @@
  */
 angular
   .module('material.components.subheader', [
-    'material.core',
-    'material.components.sticky'
+    'material.core'
   ])
   .directive('mdSubheader', MdSubheaderDirective);
 
