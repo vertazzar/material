@@ -52,7 +52,7 @@ angular
  * </hljs>
  */
 
-function MdSubheaderDirective($mdSticky, $compile, $mdTheming, $mdUtil, $mdAria) {
+function MdSubheaderDirective($compile, $mdTheming, $mdUtil, $mdAria) {
   return {
     restrict: 'E',
     replace: true,
@@ -112,7 +112,7 @@ function MdSubheaderDirective($mdSticky, $compile, $mdTheming, $mdUtil, $mdAria)
 
           // Make the element sticky and provide the stickyClone our self, to avoid recompilation of the subheader
           // element.
-          $mdSticky(scope, element, wrapper);
+          //$mdSticky(scope, element, wrapper);
         });
       }
     }
