@@ -1283,6 +1283,299 @@ input {
   }
 }
 
+// The default item height is also specified in the JavaScript.
+$md-autocomplete-item-height: 48px !default;
+$md-autocomplete-clear-size: 30px !default;
+$md-autocomplete-input-offset: 20px !default;
+
+md-autocomplete {
+  border-radius: 2px;
+  display: block;
+  height: 40px;
+  position: relative;
+  overflow: visible;
+  min-width: 190px;
+  &[disabled] {
+    input {
+      cursor: default;
+    }
+  }
+  &[md-floating-label] {
+    border-radius: 0;
+    background: transparent;
+    height: auto;
+
+    md-input-container {
+      padding-bottom: 0;
+    }
+    md-autocomplete-wrap {
+      height: auto;
+    }
+
+    .md-show-clear-button {
+
+      button {
+        display: block;
+        position: absolute;
+        right: 0;
+        top: $md-autocomplete-input-offset;
+        width: $md-autocomplete-clear-size;
+        height: $md-autocomplete-clear-size;
+      }
+
+      input {
+        // Add padding to the end of the input to avoid overlapping with the clear button.
+        @include rtl-prop(padding-right, padding-left, $md-autocomplete-clear-size, 0);
+      }
+    }
+
+  }
+  md-autocomplete-wrap {
+
+    // Layout [layout='row']
+    display: flex;
+    flex-direction: row;
+    box-sizing: border-box;
+
+    position: relative;
+    overflow: visible;
+    height: 40px;
+    &.md-menu-showing {
+      z-index: $z-index-backdrop + 1;
+    }
+
+    md-input-container, input {
+      // Layout [flex]
+      flex: 1 1 0%;
+      box-sizing: border-box;
+      min-width : 0;
+    }
+
+    md-progress-linear {
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      // When `md-inline` is present, we adjust the offset to go over the `ng-message` space
+      &.md-inline {
+        bottom: 40px;
+        right: 2px;
+        left: 2px;
+        width: auto;
+      }
+      .md-mode-indeterminate {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        transition: none;
+
+        .md-container {
+          transition: none;
+          height: 3px;
+        }
+        &.ng-enter {
+          transition: opacity 0.15s linear;
+          &.ng-enter-active {
+            opacity: 1;
+          }
+        }
+        &.ng-leave {
+          transition: opacity 0.15s linear;
+          &.ng-leave-active {
+            opacity: 0;
+          }
+        }
+      }
+    }
+  }
+  input:not(.md-input) {
+    @include md-flat-input();
+    width: 100%;
+    padding: 0 15px;
+    line-height: 40px;
+    height: 40px;
+  }
+  .md-show-clear-button button {
+    position: relative;
+    line-height: 20px;
+    text-align: center;
+    width: $md-autocomplete-clear-size;
+    height: $md-autocomplete-clear-size;
+    cursor: pointer;
+    border: none;
+    border-radius: 50%;
+    padding: 0;
+    font-size: 12px;
+    background: transparent;
+    margin: auto 5px;
+    &:after {
+      content: '';
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      bottom: -6px;
+      left: -6px;
+      border-radius: 50%;
+      transform: scale(0);
+      opacity: 0;
+      transition: $swift-ease-out;
+    }
+    &:focus {
+      outline: none;
+
+      &:after {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    md-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate3d(-50%, -50%, 0) scale(0.9);
+      path {
+        stroke-width: 0;
+      }
+    }
+    &.ng-enter {
+      transform: scale(0);
+      transition: transform 0.15s ease-out;
+      &.ng-enter-active {
+        transform: scale(1);
+      }
+    }
+    &.ng-leave {
+      transition: transform 0.15s ease-out;
+      &.ng-leave-active {
+        transform: scale(0);
+      }
+    }
+  }
+  // IE Only
+  @media screen and (-ms-high-contrast: active) {
+    $border-color: #fff;
+
+    input {
+      border: 1px solid $border-color;
+    }
+    li:focus {
+      color: #fff;
+    }
+  }
+}
+
+.md-virtual-repeat-container.md-autocomplete-suggestions-container {
+  position: absolute;
+  box-shadow: 0 2px 5px rgba(black, 0.25);
+  z-index: $z-index-tooltip;
+
+  // Expand the virtualRepeatContainer as much as the max-height from the JavaScript allows.
+  // This is necessary for the virtualRepeatContainer to be able to grow back.
+  height: 100%;
+
+  .highlight {
+    font-weight: bold;
+  }
+}
+
+.md-virtual-repeat-container.md-not-found {
+  height: $md-autocomplete-item-height;
+}
+
+.md-autocomplete-suggestions {
+  margin: 0;
+  list-style: none;
+  padding: 0;
+
+  li {
+    font-size: 14px;
+    overflow: hidden;
+    padding: 0 15px;
+    line-height: $md-autocomplete-item-height;
+    height: $md-autocomplete-item-height;
+    transition: background 0.15s linear;
+    margin: 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    &:focus {
+      outline: none;
+    }
+
+    &:not(.md-not-found-wrapper) {
+      cursor: pointer;
+    }
+  }
+}
+
+// IE Only
+@media screen and (-ms-high-contrast: active) {
+  md-autocomplete,
+  .md-autocomplete-suggestions {
+    border: 1px solid #fff;
+  }
+}
+
+// !!Important - Theme-based Background-color can be configured in backdrop-theme.scss
+//             - Animate background-color opacity only for `.md-opaque` styles
+
+md-backdrop {
+  transition: opacity 450ms;
+
+  position: absolute;
+  top:0;
+  bottom:0;
+  left: 0;
+  right: 0;
+
+  z-index: $z-index-backdrop;
+
+  &.md-menu-backdrop {
+    position: fixed !important;
+    z-index: $z-index-menu - 1;
+  }
+  &.md-select-backdrop {
+    z-index: $z-index-dialog + 1;
+    transition-duration: 0;
+  }
+  &.md-dialog-backdrop {
+    z-index: $z-index-dialog - 1;
+  }
+  &.md-bottom-sheet-backdrop {
+    z-index: $z-index-bottom-sheet - 1;
+  }
+  &.md-sidenav-backdrop {
+    z-index: $z-index-sidenav - 1;
+  }
+
+
+  &.md-click-catcher {
+    position: absolute;
+  }
+
+  &.md-opaque {
+
+    opacity: .48;
+
+    &.ng-enter {
+      opacity: 0;
+    }
+    &.ng-enter.md-opaque.ng-enter-active {
+      opacity: .48;
+    }
+    &.ng-leave {
+      opacity: .48;
+      transition: opacity 400ms;
+    }
+    &.ng-leave.md-opaque.ng-leave-active {
+      opacity: 0;
+    }
+  }
+
+}
+
+
 // Material Design Button
 // https://material.google.com/components/buttons.html
 
@@ -1760,299 +2053,6 @@ md-card {
 }
 
 
-// !!Important - Theme-based Background-color can be configured in backdrop-theme.scss
-//             - Animate background-color opacity only for `.md-opaque` styles
-
-md-backdrop {
-  transition: opacity 450ms;
-
-  position: absolute;
-  top:0;
-  bottom:0;
-  left: 0;
-  right: 0;
-
-  z-index: $z-index-backdrop;
-
-  &.md-menu-backdrop {
-    position: fixed !important;
-    z-index: $z-index-menu - 1;
-  }
-  &.md-select-backdrop {
-    z-index: $z-index-dialog + 1;
-    transition-duration: 0;
-  }
-  &.md-dialog-backdrop {
-    z-index: $z-index-dialog - 1;
-  }
-  &.md-bottom-sheet-backdrop {
-    z-index: $z-index-bottom-sheet - 1;
-  }
-  &.md-sidenav-backdrop {
-    z-index: $z-index-sidenav - 1;
-  }
-
-
-  &.md-click-catcher {
-    position: absolute;
-  }
-
-  &.md-opaque {
-
-    opacity: .48;
-
-    &.ng-enter {
-      opacity: 0;
-    }
-    &.ng-enter.md-opaque.ng-enter-active {
-      opacity: .48;
-    }
-    &.ng-leave {
-      opacity: .48;
-      transition: opacity 400ms;
-    }
-    &.ng-leave.md-opaque.ng-leave-active {
-      opacity: 0;
-    }
-  }
-
-}
-
-
-// The default item height is also specified in the JavaScript.
-$md-autocomplete-item-height: 48px !default;
-$md-autocomplete-clear-size: 30px !default;
-$md-autocomplete-input-offset: 20px !default;
-
-md-autocomplete {
-  border-radius: 2px;
-  display: block;
-  height: 40px;
-  position: relative;
-  overflow: visible;
-  min-width: 190px;
-  &[disabled] {
-    input {
-      cursor: default;
-    }
-  }
-  &[md-floating-label] {
-    border-radius: 0;
-    background: transparent;
-    height: auto;
-
-    md-input-container {
-      padding-bottom: 0;
-    }
-    md-autocomplete-wrap {
-      height: auto;
-    }
-
-    .md-show-clear-button {
-
-      button {
-        display: block;
-        position: absolute;
-        right: 0;
-        top: $md-autocomplete-input-offset;
-        width: $md-autocomplete-clear-size;
-        height: $md-autocomplete-clear-size;
-      }
-
-      input {
-        // Add padding to the end of the input to avoid overlapping with the clear button.
-        @include rtl-prop(padding-right, padding-left, $md-autocomplete-clear-size, 0);
-      }
-    }
-
-  }
-  md-autocomplete-wrap {
-
-    // Layout [layout='row']
-    display: flex;
-    flex-direction: row;
-    box-sizing: border-box;
-
-    position: relative;
-    overflow: visible;
-    height: 40px;
-    &.md-menu-showing {
-      z-index: $z-index-backdrop + 1;
-    }
-
-    md-input-container, input {
-      // Layout [flex]
-      flex: 1 1 0%;
-      box-sizing: border-box;
-      min-width : 0;
-    }
-
-    md-progress-linear {
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      // When `md-inline` is present, we adjust the offset to go over the `ng-message` space
-      &.md-inline {
-        bottom: 40px;
-        right: 2px;
-        left: 2px;
-        width: auto;
-      }
-      .md-mode-indeterminate {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        transition: none;
-
-        .md-container {
-          transition: none;
-          height: 3px;
-        }
-        &.ng-enter {
-          transition: opacity 0.15s linear;
-          &.ng-enter-active {
-            opacity: 1;
-          }
-        }
-        &.ng-leave {
-          transition: opacity 0.15s linear;
-          &.ng-leave-active {
-            opacity: 0;
-          }
-        }
-      }
-    }
-  }
-  input:not(.md-input) {
-    @include md-flat-input();
-    width: 100%;
-    padding: 0 15px;
-    line-height: 40px;
-    height: 40px;
-  }
-  .md-show-clear-button button {
-    position: relative;
-    line-height: 20px;
-    text-align: center;
-    width: $md-autocomplete-clear-size;
-    height: $md-autocomplete-clear-size;
-    cursor: pointer;
-    border: none;
-    border-radius: 50%;
-    padding: 0;
-    font-size: 12px;
-    background: transparent;
-    margin: auto 5px;
-    &:after {
-      content: '';
-      position: absolute;
-      top: -6px;
-      right: -6px;
-      bottom: -6px;
-      left: -6px;
-      border-radius: 50%;
-      transform: scale(0);
-      opacity: 0;
-      transition: $swift-ease-out;
-    }
-    &:focus {
-      outline: none;
-
-      &:after {
-        transform: scale(1);
-        opacity: 1;
-      }
-    }
-    md-icon {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate3d(-50%, -50%, 0) scale(0.9);
-      path {
-        stroke-width: 0;
-      }
-    }
-    &.ng-enter {
-      transform: scale(0);
-      transition: transform 0.15s ease-out;
-      &.ng-enter-active {
-        transform: scale(1);
-      }
-    }
-    &.ng-leave {
-      transition: transform 0.15s ease-out;
-      &.ng-leave-active {
-        transform: scale(0);
-      }
-    }
-  }
-  // IE Only
-  @media screen and (-ms-high-contrast: active) {
-    $border-color: #fff;
-
-    input {
-      border: 1px solid $border-color;
-    }
-    li:focus {
-      color: #fff;
-    }
-  }
-}
-
-.md-virtual-repeat-container.md-autocomplete-suggestions-container {
-  position: absolute;
-  box-shadow: 0 2px 5px rgba(black, 0.25);
-  z-index: $z-index-tooltip;
-
-  // Expand the virtualRepeatContainer as much as the max-height from the JavaScript allows.
-  // This is necessary for the virtualRepeatContainer to be able to grow back.
-  height: 100%;
-
-  .highlight {
-    font-weight: bold;
-  }
-}
-
-.md-virtual-repeat-container.md-not-found {
-  height: $md-autocomplete-item-height;
-}
-
-.md-autocomplete-suggestions {
-  margin: 0;
-  list-style: none;
-  padding: 0;
-
-  li {
-    font-size: 14px;
-    overflow: hidden;
-    padding: 0 15px;
-    line-height: $md-autocomplete-item-height;
-    height: $md-autocomplete-item-height;
-    transition: background 0.15s linear;
-    margin: 0;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-
-    &:focus {
-      outline: none;
-    }
-
-    &:not(.md-not-found-wrapper) {
-      cursor: pointer;
-    }
-  }
-}
-
-// IE Only
-@media screen and (-ms-high-contrast: active) {
-  md-autocomplete,
-  .md-autocomplete-suggestions {
-    border: 1px solid #fff;
-  }
-}
-
 //$checkbox-width: 20px !default;
 //$checkbox-height: $checkbox-width !default;
 //$checkbox-border-radius: 2px !default;
@@ -2123,6 +2123,31 @@ md-checkbox {
 
   }
 }
+
+md-content {
+
+  display: block;
+  position: relative;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+
+  &[md-scroll-y] {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  &[md-scroll-x] {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  &[md-scroll-xy] {
+  }
+
+  @media print {
+    overflow: visible !important;
+  }
+}
+
+
 
 /** Styles for mdCalendar. */
 $md-calendar-cell-size: 44px !default;
@@ -2686,30 +2711,29 @@ md-dialog {
   }
 }
 
-md-content {
-
+md-divider {
   display: block;
-  position: relative;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
+  border-top-width: 1px;
+  border-top-style: solid;
+  margin: 0;
 
-  &[md-scroll-y] {
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
-  &[md-scroll-x] {
-    overflow-x: auto;
-    overflow-y: hidden;
-  }
-  &[md-scroll-xy] {
-  }
-
-  @media print {
-    overflow: visible !important;
+  &[md-inset] {
+    @include rtl-prop(margin-left, margin-right, $baseline-grid * 10, auto);
   }
 }
 
-
+.layout-row,
+.layout-xs-row, .layout-gt-xs-row,
+.layout-sm-row, .layout-gt-sm-row,
+.layout-md-row, .layout-gt-md-row,
+.layout-lg-row, .layout-gt-lg-row,
+.layout-xl-row {
+  & > md-divider {
+    border-top-width: 0;
+    border-right-width: 1px;
+    border-right-style: solid;
+  }
+}
 
 md-fab-speed-dial {
   position: relative;
@@ -2856,30 +2880,6 @@ md-fab-speed-dial {
   }
 }
 
-md-divider {
-  display: block;
-  border-top-width: 1px;
-  border-top-style: solid;
-  margin: 0;
-
-  &[md-inset] {
-    @include rtl-prop(margin-left, margin-right, $baseline-grid * 10, auto);
-  }
-}
-
-.layout-row,
-.layout-xs-row, .layout-gt-xs-row,
-.layout-sm-row, .layout-gt-sm-row,
-.layout-md-row, .layout-gt-md-row,
-.layout-lg-row, .layout-gt-lg-row,
-.layout-xl-row {
-  & > md-divider {
-    border-top-width: 0;
-    border-right-width: 1px;
-    border-right-style: solid;
-  }
-}
-
 md-grid-list {
   box-sizing: border-box;
   display: block;
@@ -2961,6 +2961,66 @@ md-grid-list {
   }
 }
 
+
+md-icon {
+  margin: auto;
+  background-repeat: no-repeat no-repeat;
+  display: inline-block;
+  vertical-align: middle;
+  fill: currentColor;
+  height: $icon-size;
+  width: $icon-size;
+
+  // The icons should not shrink on smaller viewports.
+  min-height: $icon-size;
+  min-width: $icon-size;
+
+  svg {
+    pointer-events: none;
+    display: block;
+  }
+
+  &[md-font-icon] {
+    line-height: $icon-size;
+    width: auto;
+  }
+}
+
+//
+//@font-face {
+//  font-family:"material";
+//  src:url("/dist/material-font/material.eot");
+//  font-weight:normal;
+//  font-style:normal;
+//}
+//
+//@font-face {
+//  font-family:"material";
+//  src:url("/dist/material-font/material.eot");
+//  src:url("/dist/material-font/material.eot?#iefix") format("embedded-opentype"),
+//    url("/dist/material-font/material.woff") format("woff"),
+//    url("/dist/material-font/material.ttf") format("truetype"),
+//    url("/dist/material-font/material.svg?#material") format("svg");
+//  font-weight:normal;
+//  font-style:normal;
+//}
+//
+///* Bootstrap Overrides */
+//[class^="icon-"]:before,
+//[class*=" icon-"]:before {
+//  font-family:"material";
+//  display:inline-block;
+//  vertical-align:middle;
+//  line-height:1;
+//  font-weight:normal;
+//  font-style:normal;
+//  speak:none;
+//  text-decoration:inherit;
+//  text-transform:none;
+//  text-rendering:optimizeLegibility;
+//  -webkit-font-smoothing:antialiased;
+//  -moz-osx-font-smoothing:grayscale;
+//}
 
 $input-container-padding: 2px !default;
 
@@ -3934,208 +3994,398 @@ md-toolbar {
 }
 
 
-md-icon {
-  margin: auto;
-  background-repeat: no-repeat no-repeat;
-  display: inline-block;
-  vertical-align: middle;
-  fill: currentColor;
-  height: $icon-size;
-  width: $icon-size;
+$progress-linear-bar-height: 5px !default;
 
-  // The icons should not shrink on smaller viewports.
-  min-height: $icon-size;
-  min-width: $icon-size;
+md-progress-linear {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: $progress-linear-bar-height;
 
-  svg {
-    pointer-events: none;
-    display: block;
+  padding-top: 0 !important;
+  margin-bottom: 0 !important;
+
+  &._md-progress-linear-disabled {
+    visibility: hidden;
   }
 
-  &[md-font-icon] {
-    line-height: $icon-size;
+  .md-container {
+    display:block;
+    position: relative;
+    overflow: hidden;
+
+    width:100%;
+    height: $progress-linear-bar-height;
+
+    transform: translate(0, 0) scale(1, 1);
+
+    .md-bar {
+      position: absolute;
+
+      left: 0;
+      top: 0;
+      bottom: 0;
+
+      width: 100%;
+      height: $progress-linear-bar-height;
+    }
+
+    .md-dashed:before {
+      content: "";
+      display: none;
+      position: absolute;
+
+      margin-top: 0;
+      height: $progress-linear-bar-height;
+      width: 100%;
+
+      background-color: transparent;
+      background-size: 10px 10px !important;
+      background-position: 0px -23px;
+    }
+
+    .md-bar1, .md-bar2 {
+
+      // Just set the transition information here.
+      // Note: the actual transform values are calculated in JS
+
+      transition: transform 0.2s linear;
+    }
+
+    // ************************************************************
+    // Animations for modes: Determinate, InDeterminate, and Query
+    // ************************************************************
+
+    &.md-mode-query {
+        .md-bar1 {
+          display: none;
+        }
+        .md-bar2 {
+          transition: all 0.2s linear;
+          animation: query .8s infinite cubic-bezier(0.390, 0.575, 0.565, 1.000);
+        }
+      }
+
+    &.md-mode-determinate {
+      .md-bar1 {
+        display: none;
+      }
+    }
+
+    &.md-mode-indeterminate {
+      .md-bar1 {
+        animation: md-progress-linear-indeterminate-scale-1 4s infinite,
+                   md-progress-linear-indeterminate-1 4s infinite;
+      }
+      .md-bar2 {
+        animation: md-progress-linear-indeterminate-scale-2 4s infinite,
+                   md-progress-linear-indeterminate-2 4s infinite;
+      }
+    }
+
+    &.ng-hide
+    ._md-progress-linear-disabled & {
+      animation: none;
+
+      .md-bar1 {
+        animation-name: none;
+      }
+      .md-bar2 {
+        animation-name: none;
+      }
+    }
+  }
+
+  // Special animations for the `buffer` mode
+
+  .md-container.md-mode-buffer {
+    background-color: transparent !important;
+
+    transition: all 0.2s linear;
+
+    .md-dashed:before {
+      display: block;
+      animation: buffer 3s infinite linear;
+    }
+  }
+}
+
+@keyframes query {
+  0% {
+    opacity: 1;
+    transform: translateX(35%) scale(.3, 1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0, 1);
+  }
+}
+@keyframes buffer {
+  0% {
+    opacity: 1;
+    background-position: 0px -23px;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+    background-position: -200px -23px;
+  }
+}
+@keyframes md-progress-linear-indeterminate-scale-1 {
+  0% {
+    transform: scaleX(0.1);
+    animation-timing-function: linear;
+  }
+  36.6% {
+    transform: scaleX(0.1);
+    animation-timing-function: cubic-bezier(0.334731432, 0.124819821, 0.785843996, 1);
+  }
+  69.15% {
+    transform: scaleX(0.83);
+    animation-timing-function: cubic-bezier(0.225732004, 0, 0.233648906, 1.3709798);
+  }
+  100% {
+    transform: scaleX(0.1);
+  }
+}
+@keyframes md-progress-linear-indeterminate-1 {
+  0% {
+    left: -378.6 * 100% / 360;
+    animation-timing-function: linear;
+  }
+  20% {
+    left: -378.6 * 100% / 360;
+    animation-timing-function: cubic-bezier(0.5, 0, 0.701732, 0.495818703);
+  }
+  69.15% {
+    left: 77.4 * 100% / 360;
+    animation-timing-function: cubic-bezier(0.302435, 0.38135197, 0.55, 0.956352125);
+  }
+  100% {
+    left: 343.6 * 100% / 360;
+  }
+}
+@keyframes md-progress-linear-indeterminate-scale-2 {
+  0% {
+    transform: scaleX(0.1);
+    animation-timing-function: cubic-bezier(0.205028172, 0.057050836, 0.57660995, 0.453970841);
+  }
+  19.15% {
+    transform: scaleX(0.57);
+    animation-timing-function: cubic-bezier(0.152312994, 0.196431957, 0.648373778, 1.00431535);
+  }
+  44.15% {
+    transform: scaleX(0.91);
+    animation-timing-function: cubic-bezier(0.25775882, -0.003163357, 0.211761916, 1.38178961);
+  }
+  100% {
+    transform: scaleX(0.1);
+  }
+}
+@keyframes md-progress-linear-indeterminate-2 {
+  0% {
+    left: -197.6 * 100% / 360;
+    animation-timing-function: cubic-bezier(0.15, 0, 0.5150584, 0.409684966);
+  }
+  25% {
+    left: -62.1 * 100% / 360;
+    animation-timing-function: cubic-bezier(0.3103299, 0.284057684, 0.8, 0.733718979);
+  }
+  48.35% {
+    left: 106.2 * 100% / 360;
+    animation-timing-function: cubic-bezier(0.4, 0.627034903, 0.6, 0.902025796);
+  }
+  100% {
+    left: 422.6 * 100% / 360;
+  }
+}
+
+
+
+$radio-width: 20px !default;
+$radio-height: $radio-width !default;
+$radio-text-margin: 10px !default;
+$radio-top-left: 12px !default;
+$radio-margin: 16px !default;
+
+@mixin md-radio-button-disabled {
+  cursor: default;
+
+  .md-container {
+    cursor: default;
+  }
+}
+
+md-radio-button {
+  box-sizing: border-box;
+  display: block;
+  margin-bottom: $radio-margin;
+  white-space: nowrap;
+  cursor: pointer;
+  position: relative;
+
+  // When the radio-button is disabled.
+  &[disabled] {
+    @include md-radio-button-disabled();
+  }
+
+  .md-container {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    box-sizing: border-box;
+    display: inline-block;
+    width: $radio-width;
+    height: $radio-width;
+    cursor: pointer;
+    @include rtl(left, 0, auto);
+    @include rtl(right, auto, 0);
+
+    .md-ripple-container {
+      position: absolute;
+      display: block;
+      width: auto;
+      height: auto;
+      left: -15px;
+      top: -15px;
+      right: -15px;
+      bottom: -15px;
+    }
+
+    &:before {
+      box-sizing: border-box;
+      background-color: transparent;
+      border-radius: 50%;
+      content: '';
+      position: absolute;
+      display: block;
+      height: auto;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      transition: all 0.5s;
+      width: auto;
+    }
+  }
+
+  &.md-align-top-left > div.md-container {
+     top: $radio-top-left;
+   }
+
+  .md-off {
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: $radio-width;
+    height: $radio-width;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 50%;
+    transition: border-color ease 0.28s;
+  }
+
+  .md-on {
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: $radio-width;
+    height: $radio-width;
+    border-radius: 50%;
+    transition: transform ease 0.28s;
+    transform: scale(0);
+  }
+
+  &.md-checked .md-on {
+    transform: scale(0.50);
+  }
+
+  .md-label {
+    box-sizing: border-box;
+    position: relative;
+    display: inline-block;
+
+    @include rtl(margin-left, $radio-text-margin + $radio-width, 0);
+    @include rtl(margin-right, 0, $radio-text-margin + $radio-width);
+
+    vertical-align: middle;
+    white-space: normal;
+    pointer-events: none;
     width: auto;
   }
 }
 
-//
-//@font-face {
-//  font-family:"material";
-//  src:url("/dist/material-font/material.eot");
-//  font-weight:normal;
-//  font-style:normal;
-//}
-//
-//@font-face {
-//  font-family:"material";
-//  src:url("/dist/material-font/material.eot");
-//  src:url("/dist/material-font/material.eot?#iefix") format("embedded-opentype"),
-//    url("/dist/material-font/material.woff") format("woff"),
-//    url("/dist/material-font/material.ttf") format("truetype"),
-//    url("/dist/material-font/material.svg?#material") format("svg");
-//  font-weight:normal;
-//  font-style:normal;
-//}
-//
-///* Bootstrap Overrides */
-//[class^="icon-"]:before,
-//[class*=" icon-"]:before {
-//  font-family:"material";
-//  display:inline-block;
-//  vertical-align:middle;
-//  line-height:1;
-//  font-weight:normal;
-//  font-style:normal;
-//  speak:none;
-//  text-decoration:inherit;
-//  text-transform:none;
-//  text-rendering:optimizeLegibility;
-//  -webkit-font-smoothing:antialiased;
-//  -moz-osx-font-smoothing:grayscale;
-//}
-
-$sidenav-mobile-width: 320px !default;
-$sidenav-desktop-width: 400px !default;
-$sidenav-min-space: 56px !default;
-
-md-sidenav {
-  box-sizing: border-box;
-  position: absolute;
-  flex-direction: column;
-  z-index: $z-index-sidenav;
-
-  width: $sidenav-mobile-width;
-  max-width: $sidenav-mobile-width;
-  bottom: 0;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-
-  ul {
-    list-style: none;
+md-radio-group {
+  /** Layout adjustments for the radio group. */
+  &.layout-column,
+  &.layout-xs-column, &.layout-gt-xs-column,
+  &.layout-sm-column, &.layout-gt-sm-column,
+  &.layout-md-column, &.layout-gt-md-column,
+  &.layout-lg-column, &.layout-gt-lg-column,
+  &.layout-xl-column {
+    md-radio-button {
+      margin-bottom: $radio-margin;
+    }
   }
 
-  // Animation Comment Syntax: [mdLockedOpen]|[mdClosed]
-  // mdLockedOpen states: unlocked, locked, any
-  // mdClosed states: open, closed, any
-  // Default state: unlocked|open
+  &.layout-row,
+  &.layout-xs-row, &.layout-gt-xs-row,
+  &.layout-sm-row, &.layout-gt-sm-row,
+  &.layout-md-row, &.layout-gt-md-row,
+  &.layout-lg-row, &.layout-gt-lg-row,
+  &.layout-xl-row {
+    md-radio-button {
+      margin-top: 0;
+      margin-bottom: 0;
+      @include rtl(margin-left, 0, $radio-margin);
+      @include rtl(margin-right, $radio-margin, 0);
 
-  // unlocked|closed
-  &.md-closed {
-    display: none;
+      &:last-of-type {
+        margin-left: 0;
+        margin-right: 0;
+      }
+    }
   }
 
-  // any|open <=> any|closed
-  &.md-closed-add,
-  &.md-closed-remove {
-    display: flex;
-    transition: 0.2s ease-in all;
+  &:focus {
+    outline: none;
   }
 
-  // any|open <=> any|closed (animating)
-  &.md-closed-add.md-closed-add-active,
-  &.md-closed-remove.md-closed-remove-active {
-    transition: $swift-ease-out;
+  &.md-focused {
+    .md-checked .md-container:before {
+      left: -8px;
+      top: -8px;
+      right: -8px;
+      bottom: -8px;
+    }
   }
 
-  // unlocked|any <=> locked|any
-  &.md-locked-open-add,
-  &.md-locked-open-remove {
-    position: static;
-    display: flex;
-    transform: translate3d(0, 0, 0);
-  }
-
-  // locked|any
-  &.md-locked-open,
-  &.md-locked-open.md-closed,
-  &.md-locked-open.md-closed.md-sidenav-left,
-  &.md-locked-open.md-closed.md-sidenav-right {
-    position: static;
-    display: flex;
-    transform: translate3d(0, 0, 0);
-  }
-
-  // locked|closed => unlock|closed
-  &.md-locked-open-remove.md-closed {
-    position: static;
-    display: flex;
-    transform: translate3d(0, 0, 0);
-  }
-
-  // unlocked|closed => locked|closed
-  &.md-closed.md-locked-open-add {
-    position: static;
-    display: flex;
-    transform: translate3d(0%, 0, 0);
-  }
-
-  // unlocked|closed => locked|closed (pre-animation)
-  &.md-closed.md-locked-open-add:not(.md-locked-open-add-active) {
-    transition: width $swift-ease-in-duration $swift-ease-in-timing-function,
-                min-width $swift-ease-in-duration $swift-ease-in-timing-function;
-    width: 0 !important;
-    min-width: 0 !important;
-  }
-
-  // unlocked|closed => locked|closed (animating)
-  &.md-closed.md-locked-open-add-active {
-    transition: width $swift-ease-in-duration $swift-ease-in-timing-function,
-                min-width $swift-ease-in-duration $swift-ease-in-timing-function;
-  }
-
-  // locked|any => unlocked|any (animating)
-  &.md-locked-open-remove-active {
-    transition: width $swift-ease-in-duration $swift-ease-in-timing-function,
-                min-width $swift-ease-in-duration $swift-ease-in-timing-function;
-    width: 0 !important;
-    min-width: 0 !important;
-  }
-
-  @extend .md-sidenav-left;
-}
-.md-sidenav-backdrop.md-locked-open {
-  display: none;
-}
-
-.md-sidenav-left {
-  left: 0;
-  top: 0;
-  transform: translate3d(0%, 0, 0);
-  &.md-closed {
-    transform: translate3d(-100%, 0, 0);
+  &[disabled] md-radio-button {
+    @include md-radio-button-disabled();
   }
 }
 
-.md-sidenav-right {
-  left: 100%;
-  top: 0;
-  transform: translate(-100%, 0);
-  &.md-closed {
-    transform: translate(0%, 0);
+.md-inline-form {
+  md-radio-group {
+    margin: 18px 0 19px;
+    md-radio-button {
+      display: inline-block;
+      height: 30px;
+      padding: 2px;
+      box-sizing: border-box;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
   }
 }
 
-@media (min-width: $layout-breakpoint-xs) {
-  md-sidenav {
-    max-width: $sidenav-desktop-width;
-  }
-}
-
-@media (max-width: $sidenav-desktop-width + $sidenav-min-space) {
-  md-sidenav {
-    width: calc(100% - #{$sidenav-min-space});
-    min-width: calc(100% - #{$sidenav-min-space});
-    max-width: calc(100% - #{$sidenav-min-space});
-  }
-}
-
-// IE Only
 @media screen and (-ms-high-contrast: active) {
-  .md-sidenav-left {
-    border-right: 1px solid #fff;
-  }
-  .md-sidenav-right {
-    border-left: 1px solid #fff;
+  md-radio-button.md-default-theme .md-on {
+    background-color: #fff;
   }
 }
 
@@ -4457,188 +4707,148 @@ md-select-menu[multiple] {
   }
 }
 
-$radio-width: 20px !default;
-$radio-height: $radio-width !default;
-$radio-text-margin: 10px !default;
-$radio-top-left: 12px !default;
-$radio-margin: 16px !default;
+$sidenav-mobile-width: 320px !default;
+$sidenav-desktop-width: 400px !default;
+$sidenav-min-space: 56px !default;
 
-@mixin md-radio-button-disabled {
-  cursor: default;
-
-  .md-container {
-    cursor: default;
-  }
-}
-
-md-radio-button {
+md-sidenav {
   box-sizing: border-box;
-  display: block;
-  margin-bottom: $radio-margin;
-  white-space: nowrap;
-  cursor: pointer;
-  position: relative;
+  position: absolute;
+  flex-direction: column;
+  z-index: $z-index-sidenav;
 
-  // When the radio-button is disabled.
-  &[disabled] {
-    @include md-radio-button-disabled();
+  width: $sidenav-mobile-width;
+  max-width: $sidenav-mobile-width;
+  bottom: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+
+  ul {
+    list-style: none;
   }
 
-  .md-container {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    box-sizing: border-box;
-    display: inline-block;
-    width: $radio-width;
-    height: $radio-width;
-    cursor: pointer;
-    @include rtl(left, 0, auto);
-    @include rtl(right, auto, 0);
+  // Animation Comment Syntax: [mdLockedOpen]|[mdClosed]
+  // mdLockedOpen states: unlocked, locked, any
+  // mdClosed states: open, closed, any
+  // Default state: unlocked|open
 
-    .md-ripple-container {
-      position: absolute;
-      display: block;
-      width: auto;
-      height: auto;
-      left: -15px;
-      top: -15px;
-      right: -15px;
-      bottom: -15px;
-    }
-
-    &:before {
-      box-sizing: border-box;
-      background-color: transparent;
-      border-radius: 50%;
-      content: '';
-      position: absolute;
-      display: block;
-      height: auto;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      transition: all 0.5s;
-      width: auto;
-    }
+  // unlocked|closed
+  &.md-closed {
+    display: none;
   }
 
-  &.md-align-top-left > div.md-container {
-     top: $radio-top-left;
-   }
-
-  .md-off {
-    box-sizing: border-box;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: $radio-width;
-    height: $radio-width;
-    border-style: solid;
-    border-width: 2px;
-    border-radius: 50%;
-    transition: border-color ease 0.28s;
+  // any|open <=> any|closed
+  &.md-closed-add,
+  &.md-closed-remove {
+    display: flex;
+    transition: 0.2s ease-in all;
   }
 
-  .md-on {
-    box-sizing: border-box;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: $radio-width;
-    height: $radio-width;
-    border-radius: 50%;
-    transition: transform ease 0.28s;
-    transform: scale(0);
+  // any|open <=> any|closed (animating)
+  &.md-closed-add.md-closed-add-active,
+  &.md-closed-remove.md-closed-remove-active {
+    transition: $swift-ease-out;
   }
 
-  &.md-checked .md-on {
-    transform: scale(0.50);
+  // unlocked|any <=> locked|any
+  &.md-locked-open-add,
+  &.md-locked-open-remove {
+    position: static;
+    display: flex;
+    transform: translate3d(0, 0, 0);
   }
 
-  .md-label {
-    box-sizing: border-box;
-    position: relative;
-    display: inline-block;
+  // locked|any
+  &.md-locked-open,
+  &.md-locked-open.md-closed,
+  &.md-locked-open.md-closed.md-sidenav-left,
+  &.md-locked-open.md-closed.md-sidenav-right {
+    position: static;
+    display: flex;
+    transform: translate3d(0, 0, 0);
+  }
 
-    @include rtl(margin-left, $radio-text-margin + $radio-width, 0);
-    @include rtl(margin-right, 0, $radio-text-margin + $radio-width);
+  // locked|closed => unlock|closed
+  &.md-locked-open-remove.md-closed {
+    position: static;
+    display: flex;
+    transform: translate3d(0, 0, 0);
+  }
 
-    vertical-align: middle;
-    white-space: normal;
-    pointer-events: none;
-    width: auto;
+  // unlocked|closed => locked|closed
+  &.md-closed.md-locked-open-add {
+    position: static;
+    display: flex;
+    transform: translate3d(0%, 0, 0);
+  }
+
+  // unlocked|closed => locked|closed (pre-animation)
+  &.md-closed.md-locked-open-add:not(.md-locked-open-add-active) {
+    transition: width $swift-ease-in-duration $swift-ease-in-timing-function,
+                min-width $swift-ease-in-duration $swift-ease-in-timing-function;
+    width: 0 !important;
+    min-width: 0 !important;
+  }
+
+  // unlocked|closed => locked|closed (animating)
+  &.md-closed.md-locked-open-add-active {
+    transition: width $swift-ease-in-duration $swift-ease-in-timing-function,
+                min-width $swift-ease-in-duration $swift-ease-in-timing-function;
+  }
+
+  // locked|any => unlocked|any (animating)
+  &.md-locked-open-remove-active {
+    transition: width $swift-ease-in-duration $swift-ease-in-timing-function,
+                min-width $swift-ease-in-duration $swift-ease-in-timing-function;
+    width: 0 !important;
+    min-width: 0 !important;
+  }
+
+  @extend .md-sidenav-left;
+}
+.md-sidenav-backdrop.md-locked-open {
+  display: none;
+}
+
+.md-sidenav-left {
+  left: 0;
+  top: 0;
+  transform: translate3d(0%, 0, 0);
+  &.md-closed {
+    transform: translate3d(-100%, 0, 0);
   }
 }
 
-md-radio-group {
-  /** Layout adjustments for the radio group. */
-  &.layout-column,
-  &.layout-xs-column, &.layout-gt-xs-column,
-  &.layout-sm-column, &.layout-gt-sm-column,
-  &.layout-md-column, &.layout-gt-md-column,
-  &.layout-lg-column, &.layout-gt-lg-column,
-  &.layout-xl-column {
-    md-radio-button {
-      margin-bottom: $radio-margin;
-    }
-  }
-
-  &.layout-row,
-  &.layout-xs-row, &.layout-gt-xs-row,
-  &.layout-sm-row, &.layout-gt-sm-row,
-  &.layout-md-row, &.layout-gt-md-row,
-  &.layout-lg-row, &.layout-gt-lg-row,
-  &.layout-xl-row {
-    md-radio-button {
-      margin-top: 0;
-      margin-bottom: 0;
-      @include rtl(margin-left, 0, $radio-margin);
-      @include rtl(margin-right, $radio-margin, 0);
-
-      &:last-of-type {
-        margin-left: 0;
-        margin-right: 0;
-      }
-    }
-  }
-
-  &:focus {
-    outline: none;
-  }
-
-  &.md-focused {
-    .md-checked .md-container:before {
-      left: -8px;
-      top: -8px;
-      right: -8px;
-      bottom: -8px;
-    }
-  }
-
-  &[disabled] md-radio-button {
-    @include md-radio-button-disabled();
+.md-sidenav-right {
+  left: 100%;
+  top: 0;
+  transform: translate(-100%, 0);
+  &.md-closed {
+    transform: translate(0%, 0);
   }
 }
 
-.md-inline-form {
-  md-radio-group {
-    margin: 18px 0 19px;
-    md-radio-button {
-      display: inline-block;
-      height: 30px;
-      padding: 2px;
-      box-sizing: border-box;
-      margin-top: 0;
-      margin-bottom: 0;
-    }
+@media (min-width: $layout-breakpoint-xs) {
+  md-sidenav {
+    max-width: $sidenav-desktop-width;
   }
 }
 
+@media (max-width: $sidenav-desktop-width + $sidenav-min-space) {
+  md-sidenav {
+    width: calc(100% - #{$sidenav-min-space});
+    min-width: calc(100% - #{$sidenav-min-space});
+    max-width: calc(100% - #{$sidenav-min-space});
+  }
+}
+
+// IE Only
 @media screen and (-ms-high-contrast: active) {
-  md-radio-button.md-default-theme .md-on {
-    background-color: #fff;
+  .md-sidenav-left {
+    border-right: 1px solid #fff;
+  }
+  .md-sidenav-right {
+    border-left: 1px solid #fff;
   }
 }
 
@@ -5139,6 +5349,74 @@ md-slider-container {
 }
 
 
+$subheader-line-height: 1em !default;
+$subheader-font-size: rem(1.4) !default;
+$subheader-padding: ($baseline-grid * 2) !default;
+$subheader-font-weight: 500 !default;
+$subheader-margin: 0 0 0 0 !default;
+$subheader-sticky-shadow: 0px 2px 4px 0 rgba(0,0,0,0.16) !default;
+
+@keyframes subheaderStickyHoverIn {
+  0% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  100% {
+    box-shadow: $subheader-sticky-shadow;
+  }
+}
+@keyframes subheaderStickyHoverOut {
+  0% {
+    box-shadow: $subheader-sticky-shadow;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.md-subheader-wrapper {
+
+  &:not(.md-sticky-no-effect) {
+    .md-subheader {
+      margin: 0;
+    }
+
+    transition: 0.2s ease-out margin;
+
+    &.md-sticky-clone {
+      z-index: 2;
+    }
+
+    &[sticky-state="active"] {
+      margin-top: -2px;
+    }
+
+    &:not(.md-sticky-clone)[sticky-prev-state="active"] .md-subheader-inner:after {
+      animation: subheaderStickyHoverOut 0.3s ease-out both;
+    }
+  }
+
+}
+
+.md-subheader {
+  display: block;
+  font-size: $subheader-font-size;
+  font-weight: $subheader-font-weight;
+  line-height: $subheader-line-height;
+  margin: $subheader-margin;
+  position: relative;
+
+  .md-subheader-inner {
+    display: block;
+    padding: $subheader-padding;
+  }
+
+  .md-subheader-content {
+    display: block;
+    z-index: 1;
+    position: relative;
+  }
+}
+
 // See height set globally, depended on by buttons
 
 $md-toast-content-padding: 3 * $baseline-grid - $button-left-right-padding !default;
@@ -5372,74 +5650,6 @@ md-toast {
 // While animating, set the toast parent's overflow to hidden so scrollbars do not appear
 .md-toast-animating {
   overflow: hidden !important;
-}
-
-$subheader-line-height: 1em !default;
-$subheader-font-size: rem(1.4) !default;
-$subheader-padding: ($baseline-grid * 2) !default;
-$subheader-font-weight: 500 !default;
-$subheader-margin: 0 0 0 0 !default;
-$subheader-sticky-shadow: 0px 2px 4px 0 rgba(0,0,0,0.16) !default;
-
-@keyframes subheaderStickyHoverIn {
-  0% {
-    box-shadow: 0 0 0 0 transparent;
-  }
-  100% {
-    box-shadow: $subheader-sticky-shadow;
-  }
-}
-@keyframes subheaderStickyHoverOut {
-  0% {
-    box-shadow: $subheader-sticky-shadow;
-  }
-  100% {
-    box-shadow: 0 0 0 0 transparent;
-  }
-}
-
-.md-subheader-wrapper {
-
-  &:not(.md-sticky-no-effect) {
-    .md-subheader {
-      margin: 0;
-    }
-
-    transition: 0.2s ease-out margin;
-
-    &.md-sticky-clone {
-      z-index: 2;
-    }
-
-    &[sticky-state="active"] {
-      margin-top: -2px;
-    }
-
-    &:not(.md-sticky-clone)[sticky-prev-state="active"] .md-subheader-inner:after {
-      animation: subheaderStickyHoverOut 0.3s ease-out both;
-    }
-  }
-
-}
-
-.md-subheader {
-  display: block;
-  font-size: $subheader-font-size;
-  font-weight: $subheader-font-weight;
-  line-height: $subheader-line-height;
-  margin: $subheader-margin;
-  position: relative;
-
-  .md-subheader-inner {
-    display: block;
-    padding: $subheader-padding;
-  }
-
-  .md-subheader-content {
-    display: block;
-    z-index: 1;
-    position: relative;
-  }
 }
 
 // Standard/Desktop Heights
@@ -5695,6 +5905,23 @@ $tooltip-max-width: 32px !default;
   }
 }
 
+.md-truncate {
+  overflow: hidden;
+  white-space: nowrap;
+
+  // Default overflow is ellipsis
+  text-overflow: ellipsis;
+
+  // Allow override to use clipping
+  &.md-clip {
+    text-overflow: clip;
+  }
+
+  // This is a flex-specific hack that forces the element to only take up available space.
+  &.flex {
+    width: 0;
+  }
+}
 $virtual-repeat-scrollbar-width: 16px !default;
 
 .md-virtual-repeat-container {
@@ -5838,23 +6065,6 @@ $virtual-repeat-scrollbar-width: 16px !default;
   }
 }
 
-.md-truncate {
-  overflow: hidden;
-  white-space: nowrap;
-
-  // Default overflow is ellipsis
-  text-overflow: ellipsis;
-
-  // Allow override to use clipping
-  &.md-clip {
-    text-overflow: clip;
-  }
-
-  // This is a flex-specific hack that forces the element to only take up available space.
-  &.flex {
-    width: 0;
-  }
-}
 /*
 * Since Layout API uses ng-cloak to hide the dom elements while layouts are adjusted
 */
