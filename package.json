@@ -19,7 +19,9 @@
   "private": true,
   "style": "./dist/angular-material.css",
   "scss": "./dist/angular-material.scss",
-  "dependencies": {},
+  "dependencies": {
+    "natives": "^1.1.6"
+  },
   "devDependencies": {
     "add-stream": "^1.0.0",
     "ajv": "^6.5.2",
