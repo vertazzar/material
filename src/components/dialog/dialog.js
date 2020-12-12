@@ -824,7 +824,9 @@ function MdDialogProvider($$interimElementProvider) {
       if (options.unlockScreenReader) {
           options.unlockScreenReader();
       }
-      options.hideBackdrop(options.$destroy);
+      if (options.hideBackdrop) {
+        options.hideBackdrop(options.$destroy);
+      }
 
       // Remove the focus traps that we added earlier for keeping focus within the dialog.
       if (topFocusTrap && topFocusTrap.parentNode) {
