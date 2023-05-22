@@ -9773,10 +9773,14 @@ function MdDialogProvider($$interimElementProvider) {
       // If the body is fixed, determine the distance to the viewport in relative from the parent.
       var parentTop = Math.abs(options.parent[0].getBoundingClientRect().top);
 
-      container.css({
-        top: (isFixed ? parentTop : 0) + 'px',
-        height: height ? height + 'px' : '100%'
-      });
+      if (!options.noAutoHeight) {
+        container.css({
+          top: (isFixed ? parentTop : 0) + 'px',
+          height: height ? height + 'px' : '100%'
+        });
+      } else {
+        previousStyles = {};
+      }
 
       return function() {
         // Reverts the modified styles back to the previous values.
