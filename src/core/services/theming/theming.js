@@ -952,7 +952,40 @@ function parseRules(theme, colorType, rules, override) {
 
   rules = rules.replace(/THEME_NAME/g, theme.name);
   var themeNameRegex = new RegExp('\\.md-' + theme.name + '-theme', 'g');
+  // "foobar { background:{{mui-theme.pallete.action.selected}};".match(/'?"?\{\{\s*mui-theme\.(.*)\s*\}\}'?"?/g)
+  // .replace(function (match, key
   var simpleVariableRegex = /'?"?\{\{\s*([a-zA-Z]+)-(A?\d+|hue-[0-3]|shadow|default)-?(\d\.?\d*)?(contrast)?\s*\}\}'?"?/g;
+  var muiVariableRegex = /'?"?\{\{\s*mui\.(.*)\s*\}\}'?"?/g;
+  var c = theme.colors;
+  var thm = window.getMuiTheme(c.primary.name, c.accent.name, c.background.name, c.warn.name);
+  thm = theme.isDark ? thm.dark : thm.light;
+  rules = rules.replace(muiVariableRegex, function (match, key) {
+    var kkey = key;
+    var args = [];
+    var fn = false;
+    if (key.includes('(')) {
+      fn = true;
+      kkey = kkey.split("(")[0];
+      args = key.split("(")[1].split(")")[0].split(",").map(function (v) {
+        var mkey = v.trim();
+        var mkget = window._.get(thm, mkey);
+        if (mkget) {
+          return mkget;
+        }
+        if (!mkey.includes('"')) {
+          if (!isNaN(parseFloat(mkey))) {
+            return parseFloat(mkey);
+          }
+        }
+        return mkey;
+      });
+    }
+    var thing = window._.get(thm, kkey);
+    if (fn) {
+      return thing.apply(null, args);
+    }
+    return thing;
+  });
 
   // find and replace simple variables where we use a specific hue, not an entire palette
   // eg. "{{primary-100}}"
