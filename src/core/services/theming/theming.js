@@ -708,6 +708,13 @@ function ThemingProvider($mdColorPalette, $$mdMetaProvider) {
     applyTheme.overrideTheme = function (src, target) {
         generateTheme(THEMES[src], src, themeConfig.nonce, THEMES[target]);
     };
+    applyTheme.deleteGeneratedTheme = function (name) {
+      angular.forEach(GENERATED[name], function (node) {
+        document.head.removeChild(node);
+      });
+      delete GENERATED[name];
+      delete THEMES[name];
+    };
     applyTheme.defineTheme = function(name, options) {
       options = options || {};
 

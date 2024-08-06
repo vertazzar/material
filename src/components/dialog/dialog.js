@@ -672,7 +672,7 @@ function MdDialogProvider($$interimElementProvider) {
 
   /* @ngInject */
   function dialogDefaultOptions($mdDialog, $mdAria, $mdUtil, $mdConstant, $animate, $document, $window, $rootElement,
-                                $log, $injector, $mdTheming, $interpolate, $mdInteraction) {
+                                $log, $injector, $mdTheming, $interpolate, $mdInteraction, $q) {
 
     var initialWidth = $($window).width(),
         initialHeight = $($window).height();
@@ -1357,6 +1357,9 @@ function MdDialogProvider($$interimElementProvider) {
      * Dialog close and pop-out animation
      */
     function dialogPopOut(container, options) {
+      if (!options.reverseAnimate) {
+        return $q.when();
+      }
       return options.reverseAnimate().then(function() {
         if (options.contentElement) {
           // When we use a contentElement, we want the element to be the same as before.
