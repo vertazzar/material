@@ -7200,6 +7200,13 @@ function ThemingProvider($mdColorPalette, $$mdMetaProvider) {
     applyTheme.overrideTheme = function (src, target) {
         generateTheme(THEMES[src], src, themeConfig.nonce, THEMES[target]);
     };
+    applyTheme.deleteGeneratedTheme = function (name) {
+      angular.forEach(GENERATED[name], function (node) {
+        document.head.removeChild(node);
+      });
+      delete GENERATED[name];
+      delete THEMES[name];
+    };
     applyTheme.defineTheme = function(name, options) {
       options = options || {};
 
@@ -9950,7 +9957,7 @@ function MdDialogDirective($$rAF, $mdTheming, $mdDialog) {
 function MdDialogProvider($$interimElementProvider) {
   // Elements to capture and redirect focus when the user presses tab at the dialog boundary.
   MdDialogController.$inject = ["$mdDialog", "$mdConstant"];
-  dialogDefaultOptions.$inject = ["$mdDialog", "$mdAria", "$mdUtil", "$mdConstant", "$animate", "$document", "$window", "$rootElement", "$log", "$injector", "$mdTheming", "$interpolate", "$mdInteraction"];
+  dialogDefaultOptions.$inject = ["$mdDialog", "$mdAria", "$mdUtil", "$mdConstant", "$animate", "$document", "$window", "$rootElement", "$log", "$injector", "$mdTheming", "$interpolate", "$mdInteraction", "$q"];
   var topFocusTrap, bottomFocusTrap;
 
   return $$interimElementProvider('$mdDialog')
@@ -10042,7 +10049,7 @@ function MdDialogProvider($$interimElementProvider) {
 
   /* @ngInject */
   function dialogDefaultOptions($mdDialog, $mdAria, $mdUtil, $mdConstant, $animate, $document, $window, $rootElement,
-                                $log, $injector, $mdTheming, $interpolate, $mdInteraction) {
+                                $log, $injector, $mdTheming, $interpolate, $mdInteraction, $q) {
 
     var initialWidth = $($window).width(),
         initialHeight = $($window).height();
@@ -10727,6 +10734,9 @@ function MdDialogProvider($$interimElementProvider) {
      * Dialog close and pop-out animation
      */
     function dialogPopOut(container, options) {
+      if (!options.reverseAnimate) {
+        return $q.when();
+      }
       return options.reverseAnimate().then(function() {
         if (options.contentElement) {
           // When we use a contentElement, we want the element to be the same as before.
